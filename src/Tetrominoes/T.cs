@@ -14,10 +14,10 @@ namespace Tetrix.Tetrominoes
         {
             Blocks = new Block[4] 
             {
-                new Block(X + 1, Y + 0, Color),
-                new Block(X + 0, Y + 1, Color),
-                new Block(X + 1, Y + 1, Color),
-                new Block(X + 2, Y + 1, Color),
+                new Block(X + 1, Y + 0, Color, 0),
+                new Block(X + 0, Y + 1, Color, 1),
+                new Block(X + 1, Y + 1, Color, 2),
+                new Block(X + 2, Y + 1, Color, 3),
             };
         }
 

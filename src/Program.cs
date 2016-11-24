@@ -28,7 +28,7 @@ namespace Tetrix
             }
         }
 
-        public static async Task RunInternalAsyn()
+        public static async  Task RunInternalAsyn()
         {
             var playField = new Playfield();
 
@@ -36,20 +36,12 @@ namespace Tetrix
                 while(true)
                 {
                     Console.Clear();
-                    playField.Render();
-                    Thread.Sleep(750);
-                }
-            });
-
-            var gameLoopThread = new Thread(() => {
-                while(true)
-                {
                     playField.Progress();
-                    Thread.Sleep(750);   
+                    playField.Render();
+                    Thread.Sleep(1000);
                 }
             });
 
-            gameLoopThread.Start();
             animationLoopThread.Start();
 
             bool run = true;
@@ -74,12 +66,14 @@ namespace Tetrix
                     case ConsoleKey.DownArrow:
                         playField.CurTetromino.MoveDown();
                         break;
+                    case ConsoleKey.D:
+                        playField.ToggleDebug();
+                        break;
                 }
-                Console.Clear();
+
+                 Console.Clear();
                 playField.Render();
             }
-            
-            Console.Clear();
         }
     }
 }

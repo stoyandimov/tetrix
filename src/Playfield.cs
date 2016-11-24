@@ -10,15 +10,22 @@ namespace Tetrix
         int _w = 10;
         int _h = 22;
 
+        int _x = 0;
+        int _y = 0;
         Random _randomizer = new Random();
 
         IList<Block> _blocks = new List<Block>();
-
+        bool _debug = false;
         public Tetromino CurTetromino { get; private set; }
 
         public Playfield()
         {
             ResetCurrentTetromino();
+        }
+
+        public void ToggleDebug()
+        {
+            _debug = !_debug;
         }
 
         public void Progress()
@@ -132,7 +139,7 @@ namespace Tetrix
                         if (b.X == x && b.Y == y)
                         {
                             Console.ForegroundColor = (ConsoleColor)b.Color;
-                            Console.Write('#');
+                            Console.Write(_debug ? b.I.ToString() : "#");
                             Console.ForegroundColor = defColor;
                             write = true;
                             break;
