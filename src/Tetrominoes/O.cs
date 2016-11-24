@@ -2,7 +2,8 @@ namespace Tetrix.Tetrominoes
 {
     public class O : Tetromino
     {
-        public O(int x, int y)
+        public O(int x, int y, Playfield playfield)
+            : base(x, y, playfield)
         {
             X = x;
             Y = y;
