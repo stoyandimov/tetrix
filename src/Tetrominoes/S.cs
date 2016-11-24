@@ -1,3 +1,5 @@
+using System;
+
 namespace Tetrix.Tetrominoes
 {
     public class S : Tetromino
@@ -14,16 +16,37 @@ namespace Tetrix.Tetrominoes
         {
             Blocks = new Block[4] 
             {
-                new Block(X + 1, Y + 1, Color),
-                new Block(X + 2, Y + 1, Color),
                 new Block(X + 2, Y + 0, Color),
                 new Block(X + 3, Y + 0, Color),
+                new Block(X + 1, Y + 1, Color),
+                new Block(X + 2, Y + 1, Color),
             };
         }
 
-        public override void Rotate()
+    public override void Rotate()
         {
+            // is horizontal
+            if (Blocks[2].Y == Blocks[3].Y)
+            {
+                if (!_playfield.AreLocationAvailale(
+                    new Tuple<int, int>(Blocks[2].X + 2, Blocks[2].Y),
+                    new Tuple<int, int>(Blocks[3].X, Blocks[3].Y - 2)))
+                        return;
+                        
+                Blocks[2].X += 2;
+                Blocks[3].Y -= 2;
+            } 
+            // is vertical
+            else
+            {
+                if (!_playfield.AreLocationAvailale(
+                    new Tuple<int, int>(Blocks[2].X - 2, Blocks[2].Y),
+                    new Tuple<int, int>(Blocks[3].X, Blocks[3].Y + 2)))
+                        return;
 
+                Blocks[2].X -= 2;
+                Blocks[3].Y += 2;
+            }
         }
     }
 }

@@ -23,7 +23,7 @@ namespace Tetrix.Tetrominoes
 
         public override void Rotate()
         {
-
+            
         }
     }
 }

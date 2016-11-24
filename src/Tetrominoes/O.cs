@@ -25,7 +25,7 @@ namespace Tetrix.Tetrominoes
 
         public override void Rotate()
         {
-
+            // rotation has no impact on view
         }
     }
 }

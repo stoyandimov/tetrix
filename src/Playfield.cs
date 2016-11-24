@@ -68,6 +68,7 @@ namespace Tetrix
 
         protected Tetromino GenerateTetromino()
         {
+            // return new T(0,0,this);
             switch(_randomizer.Next(7))
             {
                 case 0: return new I(0, 0, this);
@@ -83,10 +84,25 @@ namespace Tetrix
         }
 
         public bool IsLocationAvailable(int x, int y)
-        {
+        {   
+            // check out of boundries
+            if (x >= _w || x < 0 || y > _h /*|| y < 0*/)
+                return false;
+
+            // check block colisions
             foreach (Block b in _blocks)
                 if (!CurTetromino.Blocks.Any(_b => _b == b))
                    if (b.X == x && b.Y == y)
+                    return false;
+
+            return true;
+        }
+
+        /// Returns true if ALL locations are available
+        public bool AreLocationAvailale(params Tuple<int, int>[] locations)
+        {
+            foreach (var pos in locations)
+                if (!IsLocationAvailable(pos.Item1, pos.Item2))
                     return false;
 
             return true;

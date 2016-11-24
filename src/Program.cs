@@ -62,6 +62,9 @@ namespace Tetrix
                     case ConsoleKey.X:
                         run = false;
                         break;
+                    case ConsoleKey.UpArrow:
+                        playField.CurTetromino.Rotate();
+                        break;
                     case ConsoleKey.LeftArrow:
                         playField.CurTetromino.MoveLeft();
                         break;

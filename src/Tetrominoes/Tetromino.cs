@@ -1,5 +1,3 @@
-using Tetrix;
-
 namespace Tetrix.Tetrominoes
 {
     public abstract class Tetromino
@@ -48,7 +46,7 @@ namespace Tetrix.Tetrominoes
             foreach(Block b in Blocks)
             {
                 // Check right boundry
-                if (b.X == 0)
+                if (b.X <= 0)
                     return false;
                 // Check other element
                 if (!_playfield.IsLocationAvailable(b.X - 1, b.Y))
@@ -63,14 +61,12 @@ namespace Tetrix.Tetrominoes
             foreach(Block b in Blocks)
             {
                 // Check right boundry
-                if (b.X == 9) 
+                if (b.X >= 9) 
                     return false;
                 // Check other element
                 if (!_playfield.IsLocationAvailable(b.X + 1, b.Y))
                     return false;
             }
-
-                
 
             return true;
         }
@@ -80,7 +76,7 @@ namespace Tetrix.Tetrominoes
             foreach(Block b in Blocks)
             {
                 // Check right boundry
-                if (b.Y == 21) 
+                if (b.Y >= 21) 
                     return false;
                 // Check other element
                 if (!_playfield.IsLocationAvailable(b.X, b.Y + 1))
