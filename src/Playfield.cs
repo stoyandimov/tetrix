@@ -7,24 +7,44 @@ namespace Tetrix
 {
     public class Playfield
     {
+        // Width of the playfield
         int _w = 10;
+
+        // Height of the playfield
         int _h = 22;
+
+        // Used to generate random INTs when creating tetrominoes
         Random _randomizer = new Random();
+
+        // List of all block from all tetrominoes
         IList<Block> _blocks = new List<Block>();
+
+        // When set to true, displays the block's index instead of #
         bool _debug = false;
+
+        // Kees track of the removed rows
+        int _score = 0;
+
+        // The current tetromino moving within the playfield
         public Tetromino CurTetromino { get; private set; }
+
+        // The next tetromino
         public Tetromino NextTetromino { get; private set; }
 
+        // Constructor
         public Playfield()
         {
+            // Sets current and generate next tetromino
             ResetCurrentTetromino();
         }
 
+        // Switch between # and n (block index) when visualizing blocks
         public void ToggleDebug()
         {
             _debug = !_debug;
         }
 
+        // Progresses the game - 1 move.
         public void Progress()
         {
             if (!CurTetromino.CanMoveDown())
@@ -54,6 +74,8 @@ namespace Tetrix
                     // Shift upper blocks down
                     foreach(Block b in _blocks.Where(_b => _b.Y < row))
                         b.Y++;
+                    
+                    _score++;
                 }
 
                 // Reset the current tetromino
@@ -63,22 +85,25 @@ namespace Tetrix
             CurTetromino.MoveDown();
         }
 
+        // Set current tetromino and generate the next one
         protected void ResetCurrentTetromino()
         {
-            // If new game
+            // If new game generate 'next' before setting 'current' tetromino
             if (NextTetromino == null)
-                NextTetromino = GenerateTetromino(); 
+                NextTetromino = GenerateRandomTetromino(); 
 
             CurTetromino = NextTetromino;
-            NextTetromino = GenerateTetromino();
+            NextTetromino = GenerateRandomTetromino();
 
+            // Add all blocks from all tetrominoes to single List
+            // for faster rendering and colision detection
             foreach (Block b in CurTetromino.Blocks)
                 _blocks.Add(b);
         }
 
-        protected Tetromino GenerateTetromino()
+        // Generate random tetromino
+        protected Tetromino GenerateRandomTetromino()
         {
-            //return new T(3,0,this);
             switch(_randomizer.Next(7))
             {
                 case 0: return new I(3, 0, this);
@@ -93,6 +118,7 @@ namespace Tetrix
             }
         }
 
+        // Check if a single block location (x, y) is available/empty 
         public bool IsLocationAvailable(int x, int y)
         {   
             // check out of boundries
@@ -108,7 +134,7 @@ namespace Tetrix
             return true;
         }
 
-        /// Returns true if ALL locations are available
+        // Returns true if ALL locations are available
         public bool AreLocationAvailale(params Tuple<int, int>[] locations)
         {
             foreach (var pos in locations)
@@ -118,6 +144,7 @@ namespace Tetrix
             return true;
         }
 
+        // Renders the entire screen
         public void Render()
         {
             var defColor = Console.ForegroundColor;
@@ -159,7 +186,7 @@ namespace Tetrix
             Console.Write('+');
             for(int y = 0; y < _w; y++)
                 Console.Write('-');
-            Console.WriteLine('+');
+            Console.WriteLine(_score);
         }
     }
 }

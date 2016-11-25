@@ -28,7 +28,7 @@ namespace Tetrix
             }
         }
 
-        public static async  Task RunInternalAsyn()
+        public static async Task RunInternalAsyn()
         {
             var playField = new Playfield();
 
@@ -71,7 +71,7 @@ namespace Tetrix
                         break;
                 }
 
-                 Console.Clear();
+                Console.Clear();
                 playField.Render();
             }
         }
