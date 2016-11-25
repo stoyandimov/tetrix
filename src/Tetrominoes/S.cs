@@ -12,7 +12,7 @@ namespace Tetrix.Tetrominoes
             CreateBlocks();
         }
 
-        protected void CreateBlocks()
+        private void CreateBlocks()
         {
             Blocks = new Block[4] 
             {
@@ -23,7 +23,7 @@ namespace Tetrix.Tetrominoes
             };
         }
 
-    public override void Rotate()
+        public override void Rotate()
         {
             // is horizontal
             if (Blocks[2].Y == Blocks[3].Y)

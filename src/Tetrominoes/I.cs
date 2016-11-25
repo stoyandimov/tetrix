@@ -12,7 +12,7 @@ namespace Tetrix.Tetrominoes
             CreateBlocks();
         }
 
-        protected void CreateBlocks()
+        private void CreateBlocks()
         {
             Blocks = new Block[4] 
             {

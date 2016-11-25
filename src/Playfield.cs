@@ -9,14 +9,11 @@ namespace Tetrix
     {
         int _w = 10;
         int _h = 22;
-
-        int _x = 0;
-        int _y = 0;
         Random _randomizer = new Random();
-
         IList<Block> _blocks = new List<Block>();
         bool _debug = false;
         public Tetromino CurTetromino { get; private set; }
+        public Tetromino NextTetromino { get; private set; }
 
         public Playfield()
         {
@@ -68,32 +65,38 @@ namespace Tetrix
 
         protected void ResetCurrentTetromino()
         {
-            CurTetromino = GenerateTetromino();
+            // If new game
+            if (NextTetromino == null)
+                NextTetromino = GenerateTetromino(); 
+
+            CurTetromino = NextTetromino;
+            NextTetromino = GenerateTetromino();
+
             foreach (Block b in CurTetromino.Blocks)
                 _blocks.Add(b);
         }
 
         protected Tetromino GenerateTetromino()
         {
-            // return new T(0,0,this);
+            //return new T(3,0,this);
             switch(_randomizer.Next(7))
             {
-                case 0: return new I(0, 0, this);
-                case 1: return new O(0, 0, this);
-                case 2: return new T(0, 0, this);
-                case 3: return new S(0, 0, this);
-                case 4: return new Z(0, 0, this);
-                case 5: return new J(0, 0, this);
-                case 6: return new L(0, 0, this);
+                case 0: return new I(3, 0, this);
+                case 1: return new O(3, 0, this);
+                case 2: return new T(3, 0, this);
+                case 3: return new S(3, 0, this);
+                case 4: return new Z(3, 0, this);
+                case 5: return new J(3, 0, this);
+                case 6: return new L(3, 0, this);
                 // this is what I tested with :)
-                default: return new T(0, 0, this);
+                default: return new T(3, 0, this);
             }
         }
 
         public bool IsLocationAvailable(int x, int y)
         {   
             // check out of boundries
-            if (x >= _w || x < 0 || y > _h /*|| y < 0*/)
+            if (x >= _w || x < 0 || y >= _h /*|| y < 0*/)
                 return false;
 
             // check block colisions
@@ -123,7 +126,7 @@ namespace Tetrix
             Console.Write('+');
             for(int y = 0; y < _w; y++)
                 Console.Write('-');
-            Console.WriteLine('+');
+            Console.WriteLine(NextTetromino.Type);
             
             // For each row
             for(int y = 0; y < _h; y++)
