@@ -12,7 +12,7 @@ namespace Tetrix
             // Prompt for options
             // follow http://tetris.wikia.com/wiki/Tetris_Guideline
 
-            RunAsync().Wait();
+            Task.Run(() => RunAsync()).Wait();
         }
 
         public static async Task RunAsync()
@@ -35,7 +35,6 @@ namespace Tetrix
             var animationLoopThread = new Thread(() =>{
                 while(true)
                 {
-                    Console.Clear();
                     playField.Progress();
                     playField.Render();
                     Thread.Sleep(1000);
@@ -43,8 +42,8 @@ namespace Tetrix
             });
 
             animationLoopThread.Start();
-
             bool run = true;
+
             while(run)
             {
                 ConsoleKeyInfo input = Console.ReadKey();
@@ -71,7 +70,6 @@ namespace Tetrix
                         break;
                 }
 
-                Console.Clear();
                 playField.Render();
             }
         }

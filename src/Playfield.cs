@@ -147,8 +147,7 @@ namespace Tetrix
         // Renders the entire screen
         public void Render()
         {
-            var defColor = Console.ForegroundColor;
-            
+            Console.Clear();
             // Top border line
             Console.Write('+');
             for(int y = 0; y < _w; y++)
@@ -170,7 +169,7 @@ namespace Tetrix
                         {
                             Console.ForegroundColor = (ConsoleColor)b.Color;
                             Console.Write(_debug ? b.I.ToString() : "#");
-                            Console.ForegroundColor = defColor;
+                            Console.ResetColor();
                             write = true;
                             break;
                         }
