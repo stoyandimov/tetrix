@@ -1,25 +1,25 @@
 using System;
 
-namespace Tetrix.Tetrominoes
+namespace Tetrix.Tetroes
 {
-    public class I : Tetromino
+    public class I : Tetro
     {
         public I(int x, int y, Playfield playfield)
             : base(x, y, playfield)
         {
             Color = 11;
-            Type = TetrominoType.I;
+            Type = TetroTypes.I;
             CreateBlocks();
         }
 
         private void CreateBlocks()
         {
-            Blocks = new Block[4] 
+            Blocks = new TetroBlock[4] 
             {
-                new Block(X + 0, Y + 0, Color, 0),
-                new Block(X + 1, Y + 0, Color, 1),
-                new Block(X + 2, Y + 0, Color, 2),
-                new Block(X + 3, Y + 0, Color, 3),
+                new TetroBlock(X + 0, Y + 0, Color, 0),
+                new TetroBlock(X + 1, Y + 0, Color, 1),
+                new TetroBlock(X + 2, Y + 0, Color, 2),
+                new TetroBlock(X + 3, Y + 0, Color, 3),
             };
         }
 

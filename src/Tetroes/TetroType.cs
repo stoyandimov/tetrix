@@ -1,6 +1,6 @@
-namespace Tetrix.Tetrominoes
+namespace Tetrix.Tetroes
 {
-    public enum TetrominoType
+    public enum TetroTypes
     {
         I = 1,
         O = 2,

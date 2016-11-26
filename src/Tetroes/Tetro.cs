@@ -1,19 +1,19 @@
-namespace Tetrix.Tetrominoes
+namespace Tetrix.Tetroes
 {
-    public abstract class Tetromino
+    public abstract class Tetro
     {
 
-        public Block[] Blocks { get; protected set; }        
+        public TetroBlock[] Blocks { get; protected set; }        
         public int X { get; set; }
         public int Y { get; set; }
-        public TetrominoType Type { get; protected set; }
+        public TetroTypes Type { get; protected set; }
         
         // Use ConsoleColors
         public int Color { get; set; }
 
         protected Playfield _playfield;
 
-        public Tetromino(int x, int y, Playfield playfield)
+        public Tetro(int x, int y, Playfield playfield)
         {
             X = x;
             Y = y;

@@ -1,7 +1,7 @@
 using System;
 using System.Linq;
 using System.Collections.Generic;
-using Tetrix.Tetrominoes;
+using Tetrix.Tetroes;
 
 namespace Tetrix
 {
@@ -26,16 +26,16 @@ namespace Tetrix
         int _score = 0;
 
         // The current tetromino moving within the playfield
-        public Tetromino CurTetromino { get; private set; }
+        public Tetro CurTetro { get; private set; }
 
         // The next tetromino
-        public Tetromino NextTetromino { get; private set; }
+        public Tetro NextTetro { get; private set; }
 
         // Constructor
         public Playfield()
         {
             // Sets current and generate next tetromino
-            ResetCurrentTetromino();
+            ResetCurrentTetro();
         }
 
         // Switch between # and n (block index) when visualizing blocks
@@ -47,7 +47,7 @@ namespace Tetrix
         // Progresses the game - 1 move.
         public void Progress()
         {
-            if (!CurTetromino.CanMoveDown())
+            if (!CurTetro.CanMoveDown())
             {
                 // Check for full rows
                 var rowsToRemove= new List<int>();
@@ -79,30 +79,30 @@ namespace Tetrix
                 }
 
                 // Reset the current tetromino
-                ResetCurrentTetromino();
+                ResetCurrentTetro();
             }
 
-            CurTetromino.MoveDown();
+            CurTetro.MoveDown();
         }
 
         // Set current tetromino and generate the next one
-        protected void ResetCurrentTetromino()
+        protected void ResetCurrentTetro()
         {
             // If new game generate 'next' before setting 'current' tetromino
-            if (NextTetromino == null)
-                NextTetromino = GenerateRandomTetromino(); 
+            if (NextTetro == null)
+                NextTetro = GenerateRandomTetro(); 
 
-            CurTetromino = NextTetromino;
-            NextTetromino = GenerateRandomTetromino();
+            CurTetro = NextTetro;
+            NextTetro = GenerateRandomTetro();
 
             // Add all blocks from all tetrominoes to single List
             // for faster rendering and colision detection
-            foreach (Block b in CurTetromino.Blocks)
+            foreach (Block b in CurTetro.Blocks)
                 _blocks.Add(b);
         }
 
         // Generate random tetromino
-        protected Tetromino GenerateRandomTetromino()
+        protected Tetro GenerateRandomTetro()
         {
             switch(_randomizer.Next(7))
             {
@@ -127,7 +127,7 @@ namespace Tetrix
 
             // check block colisions
             foreach (Block b in _blocks)
-                if (!CurTetromino.Blocks.Any(_b => _b == b))
+                if (!CurTetro.Blocks.Any(_b => _b == b))
                    if (b.X == x && b.Y == y)
                     return false;
 
@@ -152,7 +152,7 @@ namespace Tetrix
             Console.Write('+');
             for(int y = 0; y < _w; y++)
                 Console.Write('-');
-            Console.WriteLine(NextTetromino.Type);
+            Console.WriteLine(NextTetro.Type);
             
             // For each row
             for(int y = 0; y < _h; y++)
@@ -163,7 +163,7 @@ namespace Tetrix
                 for(int x = 0; x < _w; x++)
                 {
                     bool write = false;
-                    foreach(Block b in _blocks)
+                    foreach(TetroBlock b in _blocks)
                     {
                         if (b.X == x && b.Y == y)
                         {

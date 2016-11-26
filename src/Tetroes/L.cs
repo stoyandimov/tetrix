@@ -1,25 +1,25 @@
 using System;
 
-namespace Tetrix.Tetrominoes
+namespace Tetrix.Tetroes
 {
-    public class J : Tetromino
+    public class L : Tetro
     {
-        public J(int x, int y, Playfield playfield)
+        public L(int x, int y, Playfield playfield)
             : base(x, y, playfield)
         {
-            Color = 9;
-            Type = TetrominoType.J;
+            Color = 15;
+            Type = TetroTypes.L;
             CreateBlocks();
         }
 
         private void CreateBlocks()
         {
-            Blocks = new Block[4] 
+            Blocks = new TetroBlock[4] 
             {
-                new Block(X + 2, Y + 1, Color, 0),
-                new Block(X + 2, Y + 2, Color, 1),
-                new Block(X + 2, Y + 3, Color, 2),
-                new Block(X + 1, Y + 3, Color, 3),
+                new TetroBlock(X + 1, Y + 1, Color, 0),
+                new TetroBlock(X + 1, Y + 2, Color, 1),
+                new TetroBlock(X + 1, Y + 3, Color, 2),
+                new TetroBlock(X + 2, Y + 3, Color, 3),
             };
         }
 
@@ -33,14 +33,14 @@ namespace Tetrix.Tetrominoes
                 if (!_playfield.AreLocationAvailale(
                     new Tuple<int, int>(Blocks[0].X + 1, Blocks[0].Y + 1),
                     new Tuple<int, int>(Blocks[2].X - 1, Blocks[2].Y - 1),
-                    new Tuple<int, int>(Blocks[3].X, Blocks[3].Y - 2)))
+                    new Tuple<int, int>(Blocks[3].X - 2, Blocks[3].Y)))
                         return;
 
                 Blocks[0].X += 1;
                 Blocks[0].Y += 1;
                 Blocks[2].X -= 1;
                 Blocks[2].Y -= 1;
-                Blocks[3].Y -= 2;
+                Blocks[3].X -= 2;
             }
             // right to bottom
             else if (Blocks[0].X > Blocks[1].X)
@@ -48,44 +48,44 @@ namespace Tetrix.Tetrominoes
                 if (!_playfield.AreLocationAvailale(
                     new Tuple<int, int>(Blocks[0].X - 1, Blocks[0].Y + 1),
                     new Tuple<int, int>(Blocks[2].X + 1, Blocks[2].Y - 1),
-                    new Tuple<int, int>(Blocks[3].X + 2, Blocks[3].Y)))
+                    new Tuple<int, int>(Blocks[3].X, Blocks[3].Y - 2)))
                         return;
 
                 Blocks[0].X -= 1;
                 Blocks[0].Y += 1;
                 Blocks[2].X += 1;
                 Blocks[2].Y -= 1;
-                Blocks[3].X += 2;
+                Blocks[3].Y -= 2;
             }
              // bottom to left
             else if (Blocks[0].Y > Blocks[1].Y)
             {
-                if (!_playfield.AreLocationAvailale(
-                    new Tuple<int, int>(Blocks[0].X - 1, Blocks[0].Y - 1),
+                 if (!_playfield.AreLocationAvailale(
+                    new Tuple<int, int>(Blocks[0].X - 1, Blocks[0].Y + 1),
                     new Tuple<int, int>(Blocks[2].X + 1, Blocks[2].Y + 1),
-                    new Tuple<int, int>(Blocks[3].X, Blocks[3].Y + 2)))
+                    new Tuple<int, int>(Blocks[3].X + 2, Blocks[3].Y)))
                         return;
 
                 Blocks[0].X -= 1;
                 Blocks[0].Y -= 1;
                 Blocks[2].X += 1;
                 Blocks[2].Y += 1;
-                Blocks[3].Y += 2;
+                Blocks[3].X += 2;
             }
             // left to top
             else
             {
-                if (!_playfield.AreLocationAvailale(
+                 if (!_playfield.AreLocationAvailale(
                     new Tuple<int, int>(Blocks[0].X + 1, Blocks[0].Y - 1),
                     new Tuple<int, int>(Blocks[2].X - 1, Blocks[2].Y + 1),
-                    new Tuple<int, int>(Blocks[3].X - 2, Blocks[3].Y)))
+                    new Tuple<int, int>(Blocks[3].X, Blocks[3].Y + 2)))
                         return;
 
                 Blocks[0].X += 1;
                 Blocks[0].Y -= 1;
                 Blocks[2].X -= 1;
                 Blocks[2].Y += 1;
-                Blocks[3].X -= 2;
+                Blocks[3].Y += 2;
             }
         }
     }
