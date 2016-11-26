@@ -7,116 +7,108 @@ namespace Tetrix
 {
     public class Playfield
     {
-        // Width of the playfield
-        int _w = 10;
-
         // Height of the playfield
         int _h = 22;
 
-        // Used to generate random INTs when creating tetrominoes
-        Random _randomizer = new Random();
+        // Width of the playfield
+        int _w = 10;
+
+        public int X = 0;
+
+        public int Y = 0;
 
         // List of all block from all tetrominoes
-        IList<Block> _blocks = new List<Block>();
+        IList<TetroBlock> _blocks = new List<TetroBlock>();
 
-        // When set to true, displays the block's index instead of #
-        bool _debug = false;
+        Game _game;
 
-        // Kees track of the removed rows
-        int _score = 0;
+        public Tetro _curTetro;
 
-        // The current tetromino moving within the playfield
-        public Tetro CurTetro { get; private set; }
+        public event EventHandler RowRemoved;   
 
-        // The next tetromino
-        public Tetro NextTetro { get; private set; }
-
-        // Constructor
-        public Playfield()
+        protected void OnRowRemoved(EventArgs e)
         {
-            // Sets current and generate next tetromino
-            ResetCurrentTetro();
+            if (RowRemoved != null)
+                RowRemoved(this, e);
         }
 
-        // Switch between # and n (block index) when visualizing blocks
-        public void ToggleDebug()
+        public event EventHandler TetroChanged;
+
+        protected void OnTetroChanged(EventArgs e)
         {
-            _debug = !_debug;
+            if (TetroChanged != null)
+                TetroChanged(this, e);
+        }
+
+        // Constructor
+        public Playfield(int x, int y, Game game)
+        {
+            X = x;
+            Y = y;
+            _game = game;
         }
 
         // Progresses the game - 1 move.
-        public void Progress()
+        public void Progress(object state)
         {
-            if (!CurTetro.CanMoveDown())
+            if (_curTetro == null)
+                ResetCurrentTetro(); 
+
+            if (!_curTetro.CanMoveDown())
             {
-                // Check for full rows
-                var rowsToRemove= new List<int>();
-                for (int y = 0; y < _h; y++)
-                {
-                    var row = _blocks.Where(b => b.Y == y);
-                    int count = row.Count();
-                    if (count == _w)
-                        rowsToRemove.Add(y);
-                }
-
-                // If full rows remove the blocks
-                foreach (int row in rowsToRemove)
-                {
-                    // Select blocks to remoev
-                    var blocksToRemove = new List<Block>();
-                    foreach(Block b in _blocks.Where(b => b.Y == row))
-                        blocksToRemove.Add(b);
-                        
-                    // Remove blocks
-                    foreach(Block b in blocksToRemove)
-                        _blocks.Remove(b);
-
-                    // Shift upper blocks down
-                    foreach(Block b in _blocks.Where(_b => _b.Y < row))
-                        b.Y++;
-                    
-                    _score++;
-                }
-
+                // Checks for full rows and removes if Any
+                RemoveFullRowsIfAny();
                 // Reset the current tetromino
                 ResetCurrentTetro();
             }
 
-            CurTetro.MoveDown();
+            _curTetro.MoveDown();
         }
 
         // Set current tetromino and generate the next one
         protected void ResetCurrentTetro()
         {
-            // If new game generate 'next' before setting 'current' tetromino
-            if (NextTetro == null)
-                NextTetro = GenerateRandomTetro(); 
-
-            CurTetro = NextTetro;
-            NextTetro = GenerateRandomTetro();
+            _curTetro = _game.GetNextTetro();
 
             // Add all blocks from all tetrominoes to single List
             // for faster rendering and colision detection
-            foreach (Block b in CurTetro.Blocks)
+            foreach (TetroBlock b in _curTetro.Blocks)
                 _blocks.Add(b);
         }
 
-        // Generate random tetromino
-        protected Tetro GenerateRandomTetro()
+        public void RemoveFullRowsIfAny()
         {
-            switch(_randomizer.Next(7))
+            // Check for full rows
+            var rowsToRemove= new List<int>();
+            for (int y = 0; y < _h; y++)
             {
-                case 0: return new I(3, 0, this);
-                case 1: return new O(3, 0, this);
-                case 2: return new T(3, 0, this);
-                case 3: return new S(3, 0, this);
-                case 4: return new Z(3, 0, this);
-                case 5: return new J(3, 0, this);
-                case 6: return new L(3, 0, this);
-                // this is what I tested with :)
-                default: return new T(3, 0, this);
+                var row = _blocks.Where(b => b.Y == y);
+                int count = row.Count();
+                if (count == _w)
+                    rowsToRemove.Add(y);
+            }
+
+            // If full rows remove the blocks
+            foreach (int row in rowsToRemove)
+            {
+                // Select blocks to remoev
+                var blocksToRemove = new List<Block>();
+                foreach(TetroBlock b in _blocks.Where(b => b.Y == row))
+                    blocksToRemove.Add(b);
+                    
+                // Remove blocks
+                foreach(TetroBlock b in blocksToRemove)
+                    _blocks.Remove(b);
+
+                // Shift upper blocks down
+                foreach(TetroBlock b in _blocks.Where(_b => _b.Y < row))
+                    b.Y++;
+
+                OnRowRemoved(new EventArgs());
             }
         }
+        
+        
 
         // Check if a single block location (x, y) is available/empty 
         public bool IsLocationAvailable(int x, int y)
@@ -127,7 +119,7 @@ namespace Tetrix
 
             // check block colisions
             foreach (Block b in _blocks)
-                if (!CurTetro.Blocks.Any(_b => _b == b))
+                if (!_curTetro.Blocks.Any(_b => _b == b))
                    if (b.X == x && b.Y == y)
                     return false;
 
@@ -145,14 +137,14 @@ namespace Tetrix
         }
 
         // Renders the entire screen
-        public void Render()
+        public void Render(object state)
         {
             Console.Clear();
             // Top border line
             Console.Write('+');
             for(int y = 0; y < _w; y++)
                 Console.Write('-');
-            Console.WriteLine(NextTetro.Type);
+            Console.WriteLine('+');
             
             // For each row
             for(int y = 0; y < _h; y++)
@@ -168,7 +160,7 @@ namespace Tetrix
                         if (b.X == x && b.Y == y)
                         {
                             Console.ForegroundColor = (ConsoleColor)b.Color;
-                            Console.Write(_debug ? b.I.ToString() : "#");
+                            Console.Write(_game.Debug ? b.I.ToString() : "#");
                             Console.ResetColor();
                             write = true;
                             break;
@@ -185,7 +177,8 @@ namespace Tetrix
             Console.Write('+');
             for(int y = 0; y < _w; y++)
                 Console.Write('-');
-            Console.WriteLine(_score);
+            Console.WriteLine('+');
         }
+        
     }
 }

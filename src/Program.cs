@@ -7,43 +7,33 @@ namespace Tetrix
     {
         public static void Main(string[] args)
         {
+            try 
+            {
+                Run();
+            }
+            catch (Exception ex)
+            {
+                Console.Clear();
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine("E: Something went wrong");
+                Console.WriteLine();
+                Console.WriteLine(ex);
+                Console.WriteLine();
+                Console.WriteLine("Press [enter] to exit;");
+                Console.ReadLine();                
+            }
+        }
+
+        public static void Run()
+        {
             Console.WriteLine("Welcome to TETRIX - the cross plat tetris");
             // Present welcome message
             // Prompt for options
             // follow http://tetris.wikia.com/wiki/Tetris_Guideline
 
-            Task.Run(() => RunAsync()).Wait();
-        }
-
-        public static async Task RunAsync()
-        {
-            try
-            {
-                await RunInternalAsyn();
-            } 
-            catch (Exception ex)
-            {
-                Console.Clear();
-                Console.WriteLine(ex);
-            }
-        }
-
-        public static async Task RunInternalAsyn()
-        {
-            var playField = new Playfield();
-
-            var animationLoopThread = new Thread(() =>{
-                while(true)
-                {
-                    playField.Progress();
-                    playField.Render();
-                    Thread.Sleep(1000);
-                }
-            });
-
-            animationLoopThread.Start();
+            var game = new Game();
+            game.Play();
             bool run = true;
-
             while(run)
             {
                 ConsoleKeyInfo input = Console.ReadKey();
@@ -54,23 +44,23 @@ namespace Tetrix
                         run = false;
                         break;
                     case ConsoleKey.UpArrow:
-                        playField.CurTetro.Rotate();
+                        game.Playfield._curTetro.Rotate();
                         break;
                     case ConsoleKey.LeftArrow:
-                        playField.CurTetro.MoveLeft();
+                        game.Playfield._curTetro.MoveLeft();
                         break;
                     case ConsoleKey.RightArrow:
-                        playField.CurTetro.MoveRight();
+                        game.Playfield._curTetro.MoveRight();
                         break;
                     case ConsoleKey.DownArrow:
-                        playField.CurTetro.MoveDown();
+                        game.Playfield._curTetro.MoveDown();
                         break;
                     case ConsoleKey.D:
-                        playField.ToggleDebug();
+                        game.ToggleDebug();
                         break;
                 }
 
-                playField.Render();
+                //game.Playfield.Render(null);
             }
         }
     }
