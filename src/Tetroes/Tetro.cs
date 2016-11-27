@@ -3,7 +3,7 @@ namespace Tetrix.Tetroes
     public abstract class Tetro
     {
 
-        public TetroBlock[] Blocks { get; protected set; }        
+        public Block[] Blocks { get; protected set; }        
         public int X { get; set; }
         public int Y { get; set; }
         public TetroTypes Type { get; protected set; }
@@ -45,9 +45,6 @@ namespace Tetrix.Tetroes
         {
             foreach(Block b in Blocks)
             {
-                // Check right boundry
-                if (b.X <= 0)
-                    return false;
                 // Check other element
                 if (!_playfield.IsLocationAvailable(b.X - 1, b.Y))
                     return false;
@@ -60,9 +57,6 @@ namespace Tetrix.Tetroes
         {
             foreach(Block b in Blocks)
             {
-                // Check right boundry
-                if (b.X >= 9) 
-                    return false;
                 // Check other element
                 if (!_playfield.IsLocationAvailable(b.X + 1, b.Y))
                     return false;
@@ -75,9 +69,6 @@ namespace Tetrix.Tetroes
         {
             foreach(Block b in Blocks)
             {
-                // Check right boundry
-                if (b.Y >= 21) 
-                    return false;
                 // Check other element
                 if (!_playfield.IsLocationAvailable(b.X, b.Y + 1))
                     return false;

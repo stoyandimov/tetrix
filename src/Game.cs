@@ -1,5 +1,6 @@
 using System;
 using System.Threading;
+using System.Threading.Tasks;
 using Tetrix.Tetroes;
 
 namespace Tetrix
@@ -20,12 +21,14 @@ namespace Tetrix
         // Kees track of the removed rows
         int _score = 0;
 
-        public Playfield Playfield { get; set;}
+        public Playfield Playfield { get; private set;}
+        public Renderer Renderer { get; private set; }
         Timer _timer;
         Timer _renderTimer;
         public Game()
         {
-            Playfield = new Playfield(1, 1, this);
+            Renderer = new Renderer();
+            Playfield = new Playfield(3, 3, Renderer, this);
         }
 
         public void Run()
@@ -37,8 +40,10 @@ namespace Tetrix
         {
             // Timer(TimerCallback callback, object state, int dueTime, int period);
             Playfield.Progress(null);
-            _timer = new Timer(Playfield.Progress, null, 0, 1000);
-            _renderTimer = new Timer(Playfield.Render, null, 0, 1000);            
+            Playfield.Render(null);
+            _timer = new Timer(state => { Playfield.Progress(state); }, null, 0, 1000);
+            Task.Run(() => Renderer.ProcessUpdates());
+            //_renderTimer = new Timer(Renderer.ProcessUpdates, null, 0, 1000);            
         }
 
         public void Stop()
@@ -70,15 +75,15 @@ namespace Tetrix
         {
             switch(Randomizer.Next(7))
             {
-                case 0: return new I(Playfield.X + 3, Playfield.Y, Playfield);
-                case 1: return new O(Playfield.X + 3, Playfield.Y, Playfield);
-                case 2: return new T(Playfield.X + 3, Playfield.Y, Playfield);
-                case 3: return new S(Playfield.X + 3, Playfield.Y, Playfield);
-                case 4: return new Z(Playfield.X + 3, Playfield.Y, Playfield);
-                case 5: return new J(Playfield.X + 3, Playfield.Y, Playfield);
-                case 6: return new L(Playfield.X + 3, Playfield.Y, Playfield);
+                case 0: return new I(Playfield.X + 4, Playfield.Y + 1, Playfield);
+                case 1: return new O(Playfield.X + 4, Playfield.Y + 1, Playfield);
+                case 2: return new T(Playfield.X + 4, Playfield.Y + 1, Playfield);
+                case 3: return new S(Playfield.X + 4, Playfield.Y + 1, Playfield);
+                case 4: return new Z(Playfield.X + 4, Playfield.Y + 1, Playfield);
+                case 5: return new J(Playfield.X + 4, Playfield.Y + 1, Playfield);
+                case 6: return new L(Playfield.X + 4, Playfield.Y + 1, Playfield);
                 // this is what I tested with :)
-                default: return new T(Playfield.X + 3, Playfield.Y, Playfield);
+                default: return new T(Playfield.X + 4, Playfield.Y + 1, Playfield);
             }
         }
 

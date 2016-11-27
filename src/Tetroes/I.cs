@@ -14,12 +14,12 @@ namespace Tetrix.Tetroes
 
         private void CreateBlocks()
         {
-            Blocks = new TetroBlock[4] 
+            Blocks = new Block[4] 
             {
-                new TetroBlock(X + 0, Y + 0, Color, 0),
-                new TetroBlock(X + 1, Y + 0, Color, 1),
-                new TetroBlock(X + 2, Y + 0, Color, 2),
-                new TetroBlock(X + 3, Y + 0, Color, 3),
+                new Block(X + 0, Y + 0, Color, '#', _playfield.Renderer, '0'),
+                new Block(X + 1, Y + 0, Color, '#', _playfield.Renderer, '1'),
+                new Block(X + 2, Y + 0, Color, '#', _playfield.Renderer, '2'),
+                new Block(X + 3, Y + 0, Color, '#', _playfield.Renderer, '3'),
             };
         }
 
