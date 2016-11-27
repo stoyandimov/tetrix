@@ -5,38 +5,56 @@ namespace Tetrix
 {
     public class Renderer
     {
-
         public bool Debug;
+
+        public int AdditionsCounter = 0;
+        public int DeletionsCounter = 0;
+        public int MutationsCounter = 0;
 
         public Renderer(bool debug)
         {
             Debug = debug;
         }
 
-        public BlockingCollection<BlockMovement> Moves { get; private set; }  = new BlockingCollection<BlockMovement>();  
+        public BlockingCollection<TetroMutation> Mutations { get; private set; }  = new BlockingCollection<TetroMutation>();  
 
         public void ProcessUpdates()
         {
             while(true) 
             {
-                BlockMovement m = Moves.Take();
-                Console.SetCursorPosition(m.OldX, m.OldY);
-                Console.Write(' ');
-                Console.SetCursorPosition(m.NewX, m.NewY);
-                Console.ForegroundColor = (ConsoleColor) m.Block.Color;
-                Console.Write(Debug ? m.Block.Debug : m.Block.Symbol);
-                Console.ResetColor();
+                TetroMutation m = Mutations.Take();
+                m.RemoveRedundentBlockMutations();
+                foreach (Tuple<Block, int, int> pos in m.SourcePosition)
+                {
+                    Console.SetCursorPosition(pos.Item2, pos.Item3);
+                    Console.Write(' ');
+                    
+                    DeletionsCounter++;
+                }
+
+                foreach (Tuple<Block, int, int> pos in m.TargetPosition)
+                {
+                    Console.SetCursorPosition(pos.Item2, pos.Item3);
+                    Console.ForegroundColor = (ConsoleColor) pos.Item1.Color;
+                    Console.Write(Debug ? pos.Item1.Debug : pos.Item1.Symbol);
+                    Console.ResetColor();
+
+                    AdditionsCounter++;
+                }
+
+                MutationsCounter++;
+                if (Debug)
+                {
+                    Console.SetCursorPosition(20, 15);
+                    Console.Write("Additions: " + AdditionsCounter);
+                    Console.SetCursorPosition(20, 16);
+                    Console.Write("Deletions: " + DeletionsCounter);
+                    Console.SetCursorPosition(20, 17);
+                    Console.Write("Mutations: " + MutationsCounter);
+                }
+
                 Console.SetCursorPosition(0, 27);
             }
         }
-    }
-
-    public class BlockMovement
-    {
-        public int OldX { get; set; }
-        public int OldY { get; set; }
-        public int NewX { get; set; }
-        public int NewY { get; set; }
-        public Block Block { get; set; }
     }
 }

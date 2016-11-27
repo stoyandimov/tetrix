@@ -24,7 +24,7 @@ namespace Tetrix
 
         public Renderer Renderer { get; private set; }
 
-        public Tetro _curTetro;
+        Tetro _curTetro;
 
         public event EventHandler RowRemoved;   
 
@@ -63,9 +63,49 @@ namespace Tetrix
                 RemoveFullRowsIfAny();
                 // Reset the current tetromino
                 ResetCurrentTetro();
+
+                return;
             }
 
+            MoveDown();
+        }
+
+        public void Rotate()
+        {
+            _curTetro.BeginMutation();
+            _curTetro.Rotate();
+            Renderer.Mutations.Add(_curTetro.EndMupation());
+        }
+
+        public void MoveLeft()
+        {
+            if (!_curTetro.CanMoveLeft())
+                return;
+
+            _curTetro.BeginMutation();
+            _curTetro.MoveLeft();
+            Renderer.Mutations.Add(_curTetro.EndMupation());
+        }
+
+        public void MoveRight()
+        {
+            if (!_curTetro.CanMoveRight())
+                return;
+
+            _curTetro.BeginMutation();
+            _curTetro.MoveRight();
+            Renderer.Mutations.Add(_curTetro.EndMupation());
+
+        }
+
+        public void MoveDown()
+        {
+            if (!_curTetro.CanMoveDown())
+                return;
+
+            _curTetro.BeginMutation();
             _curTetro.MoveDown();
+            Renderer.Mutations.Add(_curTetro.EndMupation());
         }
 
         // Set current tetromino and generate the next one
@@ -83,9 +123,9 @@ namespace Tetrix
         {
             // Check for full rows
             var rowsToRemove= new List<int>();
-            for (int y = 0; y < _h; y++)
+            for (int y = 0; y < _h + Y; y++)
             {
-                var row = _blocks.Where(b => b.Y == y + Y + 1);
+                var row = _blocks.Where(b => b.Y == y + Y);
                 int count = row.Count();
                 if (count == _w)
                     rowsToRemove.Add(y);
@@ -110,8 +150,6 @@ namespace Tetrix
                 OnRowRemoved(new EventArgs());
             }
         }
-        
-        
 
         // Check if a single block location (x, y) is available/empty 
         public bool IsLocationAvailable(int x, int y)

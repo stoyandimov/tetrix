@@ -1,8 +1,9 @@
+using System;
+
 namespace Tetrix.Tetroes
 {
     public abstract class Tetro
     {
-
         public Block[] Blocks { get; protected set; }        
         public int X { get; set; }
         public int Y { get; set; }
@@ -10,6 +11,10 @@ namespace Tetrix.Tetroes
         
         // Use ConsoleColors
         public int Color { get; set; }
+
+        // Container for the mutation state (used by BeginMutation(), EndMupation();)
+        private TetroMutation _mutationState;
+        
 
         protected Playfield _playfield;
 
@@ -23,25 +28,22 @@ namespace Tetrix.Tetroes
         public abstract void Rotate();
         public void MoveLeft()
         {
-            if (CanMoveLeft())
-                foreach(Block b in Blocks)
-                    b.X--;
+            foreach(Block b in Blocks)
+                b.X--;
         }
         public void MoveRight()
         {
-            if (CanMoveRight())
-                foreach(Block b in Blocks)
-                    b.X++;   
+            foreach(Block b in Blocks)
+                b.X++;   
         }
 
         public void MoveDown()
         {
-            if(CanMoveDown())
-                foreach(Block b in Blocks)
-                    b.Y++;
+            foreach(Block b in Blocks)
+                b.Y++;
         }
 
-        protected bool CanMoveLeft()
+        public bool CanMoveLeft()
         {
             foreach(Block b in Blocks)
             {
@@ -53,7 +55,7 @@ namespace Tetrix.Tetroes
             return true;
         }
 
-        protected bool CanMoveRight()
+        public bool CanMoveRight()
         {
             foreach(Block b in Blocks)
             {
@@ -76,5 +78,24 @@ namespace Tetrix.Tetroes
 
             return true;
         }
+
+        // Registers the current location of the tetro blocks
+        public void BeginMutation()
+        {
+            _mutationState = new TetroMutation();
+            foreach(Block b in Blocks)
+                _mutationState.SourcePosition.Add(new Tuple<Block, int, int>(b, b.X, b.Y));
+        }
+
+        // Registers the current location of the tetro blocks and returns 
+        // Tetro mutation with the old block locations and the new block locations 
+        public TetroMutation EndMupation()
+        {
+            foreach(Block b in Blocks)
+                _mutationState.TargetPosition.Add(new Tuple<Block, int, int>(b, b.X, b.Y));
+
+            return _mutationState;
+        }
     }
+  
 }

@@ -10,13 +10,6 @@ namespace Tetrix
         {
             try 
             {
-                // prevent vs code from interupting when calling Console.Clear()
-                if (args.Contains("--no-output"))
-                {
-                    Console.WriteLine("Debugging enabled. Redirecting output to mem stream...");
-                    Console.SetOut(new StreamWriter(new MemoryStream()));
-                }
-
                 // Show number instead of blocks for tetroes
                 bool debug = args.Contains("--debug");
 
@@ -55,16 +48,16 @@ namespace Tetrix
                         run = false;
                         break;
                     case ConsoleKey.UpArrow:
-                        game.Playfield._curTetro.Rotate();
+                        game.Playfield.Rotate();
                         break;
                     case ConsoleKey.LeftArrow:
-                        game.Playfield._curTetro.MoveLeft();
+                        game.Playfield.MoveLeft();
                         break;
                     case ConsoleKey.RightArrow:
-                        game.Playfield._curTetro.MoveRight();
+                        game.Playfield.MoveRight();
                         break;
                     case ConsoleKey.DownArrow:
-                        game.Playfield._curTetro.MoveDown();
+                        game.Playfield.MoveDown();
                         break;
                     case ConsoleKey.D:
                         game.ToggleDebug();
@@ -73,8 +66,6 @@ namespace Tetrix
                         game.Playfield.Render(null);
                         break;
                 }
-
-                //game.Playfield.Render(null);
             }
         }
     }
