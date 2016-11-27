@@ -1,6 +1,7 @@
 ﻿using System;
-using System.Threading;
-using System.Threading.Tasks;
+using System.IO;
+using System.Linq;
+
 namespace Tetrix
 {
     public class Program
@@ -9,7 +10,17 @@ namespace Tetrix
         {
             try 
             {
-                Run();
+                // prevent vs code from interupting when calling Console.Clear()
+                if (args.Contains("--no-output"))
+                {
+                    Console.WriteLine("Debugging enabled. Redirecting output to mem stream...");
+                    Console.SetOut(new StreamWriter(new MemoryStream()));
+                }
+
+                // Show number instead of blocks for tetroes
+                bool debug = args.Contains("--debug");
+
+                Run(debug);
             }
             catch (Exception ex)
             {
@@ -24,14 +35,14 @@ namespace Tetrix
             }
         }
 
-        public static void Run()
+        public static void Run(bool debug)
         {
             Console.WriteLine("Welcome to TETRIX - the cross plat tetris");
             // Present welcome message
             // Prompt for options
             // follow http://tetris.wikia.com/wiki/Tetris_Guideline
 
-            var game = new Game();
+            var game = new Game(new GameContext(debug));
             game.Play();
             bool run = true;
             while(run)
@@ -57,6 +68,9 @@ namespace Tetrix
                         break;
                     case ConsoleKey.D:
                         game.ToggleDebug();
+                        break;
+                    case ConsoleKey.F5:
+                        game.Playfield.Render(null);
                         break;
                 }
 

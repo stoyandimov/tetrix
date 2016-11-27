@@ -16,7 +16,7 @@ namespace Tetrix
 
 
           // When set to true, displays the block's index instead of #
-        public bool Debug { get; set; } = false;
+        public bool Debug { get; private set; }
 
         // Kees track of the removed rows
         int _score = 0;
@@ -24,10 +24,11 @@ namespace Tetrix
         public Playfield Playfield { get; private set;}
         public Renderer Renderer { get; private set; }
         Timer _timer;
-        Timer _renderTimer;
-        public Game()
+        
+        public Game(GameContext ctx)
         {
-            Renderer = new Renderer();
+            Debug = ctx.Debug;
+            Renderer = new Renderer(Debug);
             Playfield = new Playfield(3, 3, Renderer, this);
         }
 
@@ -42,8 +43,7 @@ namespace Tetrix
             Playfield.Progress(null);
             Playfield.Render(null);
             _timer = new Timer(state => { Playfield.Progress(state); }, null, 0, 1000);
-            Task.Run(() => Renderer.ProcessUpdates());
-            //_renderTimer = new Timer(Renderer.ProcessUpdates, null, 0, 1000);            
+            Task.Run(() => Renderer.ProcessUpdates());            
         }
 
         public void Stop()
@@ -56,6 +56,7 @@ namespace Tetrix
         public void ToggleDebug()
         {
             Debug = !Debug;
+            Renderer.Debug = Debug;
         }
 
         public Tetro GetNextTetro()
@@ -73,6 +74,8 @@ namespace Tetrix
         // Generate random tetromino
         protected Tetro GenerateRandomTetro()
         {
+            return new I(Playfield.X + 4, Playfield.Y + 1, Playfield);
+            
             switch(Randomizer.Next(7))
             {
                 case 0: return new I(Playfield.X + 4, Playfield.Y + 1, Playfield);

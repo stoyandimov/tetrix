@@ -70,8 +70,8 @@ namespace Tetrix
             _renderer = renderer;
             Symbol = symbol;
             Debug = debug;
-            Y = y;
-            X = x;
+            _y = y;
+            _x = x;
             Color = color;
         }
         public Block(int x, int y, int color, char symbol, Renderer renderer)

@@ -5,6 +5,14 @@ namespace Tetrix
 {
     public class Renderer
     {
+
+        public bool Debug;
+
+        public Renderer(bool debug)
+        {
+            Debug = debug;
+        }
+
         public BlockingCollection<BlockMovement> Moves { get; private set; }  = new BlockingCollection<BlockMovement>();  
 
         public void ProcessUpdates()
@@ -16,7 +24,7 @@ namespace Tetrix
                 Console.Write(' ');
                 Console.SetCursorPosition(m.NewX, m.NewY);
                 Console.ForegroundColor = (ConsoleColor) m.Block.Color;
-                Console.Write(m.Block.Debug);
+                Console.Write(Debug ? m.Block.Debug : m.Block.Symbol);
                 Console.ResetColor();
                 Console.SetCursorPosition(0, 27);
             }

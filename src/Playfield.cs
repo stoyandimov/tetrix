@@ -85,7 +85,7 @@ namespace Tetrix
             var rowsToRemove= new List<int>();
             for (int y = 0; y < _h; y++)
             {
-                var row = _blocks.Where(b => b.Y == y);
+                var row = _blocks.Where(b => b.Y == y + Y + 1);
                 int count = row.Count();
                 if (count == _w)
                     rowsToRemove.Add(y);
@@ -163,7 +163,36 @@ namespace Tetrix
                 
                 // For each column
                 for(int x = 0; x < _w; x++)
-                    Console.Write(' ');
+                {
+                    bool write = false;
+                    foreach(Block b in _blocks)
+                    {
+                        // +X/Y for the playfield position (+1 accounting for borders)
+                        if (b.X == x + X + 1 && b.Y == y + Y + 1)
+                        {
+                            Console.ForegroundColor = (ConsoleColor)b.Color;
+                            Console.Write(_game.Debug ? b.Debug : b.Symbol);
+                            Console.ResetColor();
+                            write = true;
+                            break;
+                        }
+                    }
+                    // If no block output 'empty' or if debug output y 
+                    if (!write)
+                    {
+                        if (_game.Debug)
+                        {
+                            Console.ForegroundColor = ConsoleColor.DarkBlue;
+                            Console.Write(y.ToString().Last());
+                            Console.ResetColor();
+                        }
+                        else 
+                        {
+                            Console.Write(' ');
+                        }
+
+                    }
+                }
 
                 Console.WriteLine('|'); // Right border line                
             }
