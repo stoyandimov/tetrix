@@ -123,9 +123,12 @@ namespace Tetrix
         {
             // Check for full rows
             var rowsToRemove= new List<int>();
-            for (int y = 0; y < _h + Y; y++)
+            for (int y = 1; y <= _h; y++)
             {
-                var row = _blocks.Where(b => b.Y == y + Y);
+                var row = _blocks.Where(b => b.Y == y);
+                Console.SetCursorPosition(0, 10 + y);
+                if (row.Count() > 0)
+                    Console.Write("Row: " + y + " boxes: " + row.Count()); 
                 int count = row.Count();
                 if (count == _w)
                     rowsToRemove.Add(y);

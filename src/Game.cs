@@ -14,40 +14,44 @@ namespace Tetrix
         // The next tetromino
         public Tetro NextTetro { get; private set; }
 
-
-          // When set to true, displays the block's index instead of #
+        // When set to true, displays the block's index instead of #
         public bool Debug { get; private set; }
+        
+        // Playfield - the UI box container for all tetroes
+        public Playfield Playfield { get; private set;}
+
+        // Renders tetro mutations (that is movements and rotations)
+        public Renderer Renderer { get; private set; }
+
+        // Indicate if the game is running or paused
+        public bool IsPaused { get; set; }
 
         // Kees track of the removed rows
         int _score = 0;
 
-        public Playfield Playfield { get; private set;}
-        public Renderer Renderer { get; private set; }
+        // Timer keeping the game speed
         Timer _timer;
-        
+
         public Game(GameContext ctx)
         {
             Debug = ctx.Debug;
             Renderer = new Renderer(Debug);
-            Playfield = new Playfield(3, 3, Renderer, this);
+            Playfield = new Playfield(0, 0, Renderer, this);
         }
-
-        public void Run()
-        {
-            // public Timer(TimerCallback callback, object state, int dueTime, int period);
-        }
-
+        
+        // Starts the movement of tetroes
         public void Play()
         {
-            // Timer(TimerCallback callback, object state, int dueTime, int period);
-            Playfield.Progress(null);
-            Playfield.Render(null);
             _timer = new Timer(state => { Playfield.Progress(state); }, null, 0, 1000);
-            Task.Run(() => Renderer.ProcessUpdates());            
+            Playfield.Render(null);
+            Task.Run(() => Renderer.ProcessUpdates());
+            IsPaused = false;
         }
 
-        public void Stop()
+        // Pauses the movement of tetroes
+        public void Pause()
         {
+            IsPaused = true;
             _timer.Dispose();
             _timer = null;
         }
@@ -71,24 +75,11 @@ namespace Tetrix
             return curTetro;
         }
 
-        // Generate random tetromino
-        protected Tetro GenerateRandomTetro()
+        // Generates a random tetro
+        public Tetro GenerateRandomTetro()
         {
-            return new I(Playfield.X + 4, Playfield.Y + 1, Playfield);
-            
-            switch(Randomizer.Next(7))
-            {
-                case 0: return new I(Playfield.X + 4, Playfield.Y + 1, Playfield);
-                case 1: return new O(Playfield.X + 4, Playfield.Y + 1, Playfield);
-                case 2: return new T(Playfield.X + 4, Playfield.Y + 1, Playfield);
-                case 3: return new S(Playfield.X + 4, Playfield.Y + 1, Playfield);
-                case 4: return new Z(Playfield.X + 4, Playfield.Y + 1, Playfield);
-                case 5: return new J(Playfield.X + 4, Playfield.Y + 1, Playfield);
-                case 6: return new L(Playfield.X + 4, Playfield.Y + 1, Playfield);
-                // this is what I tested with :)
-                default: return new T(Playfield.X + 4, Playfield.Y + 1, Playfield);
-            }
+            TetroTypes type = (TetroTypes) Randomizer.Next(7);
+            return Tetro.CreateTetro(type, Playfield);
         }
-
     }
 }

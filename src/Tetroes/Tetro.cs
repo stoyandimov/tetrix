@@ -15,7 +15,6 @@ namespace Tetrix.Tetroes
         // Container for the mutation state (used by BeginMutation(), EndMupation();)
         private TetroMutation _mutationState;
         
-
         protected Playfield _playfield;
 
         public Tetro(int x, int y, Playfield playfield)
@@ -26,11 +25,13 @@ namespace Tetrix.Tetroes
         }
 
         public abstract void Rotate();
+        
         public void MoveLeft()
         {
             foreach(Block b in Blocks)
                 b.X--;
         }
+
         public void MoveRight()
         {
             foreach(Block b in Blocks)
@@ -96,6 +97,24 @@ namespace Tetrix.Tetroes
 
             return _mutationState;
         }
+
+        // Creates tetromino
+        public static Tetro CreateTetro(TetroTypes type, Playfield playfield)
+        {
+            switch(type)
+            {
+                case TetroTypes.I: return new I(playfield.X + 4, playfield.Y + 1, playfield);
+                case TetroTypes.O: return new O(playfield.X + 4, playfield.Y + 1, playfield);
+                case TetroTypes.T: return new T(playfield.X + 4, playfield.Y + 1, playfield);
+                case TetroTypes.S: return new S(playfield.X + 4, playfield.Y + 1, playfield);
+                case TetroTypes.Z: return new Z(playfield.X + 4, playfield.Y + 1, playfield);
+                case TetroTypes.J: return new J(playfield.X + 4, playfield.Y + 1, playfield);
+                case TetroTypes.L: return new L(playfield.X + 4, playfield.Y + 1, playfield);
+                // this is what I tested with :)
+                default: throw new ArgumentOutOfRangeException("type");
+            }
+        }
+
     }
   
 }

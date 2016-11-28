@@ -1,5 +1,4 @@
 ﻿using System;
-using System.IO;
 using System.Linq;
 
 namespace Tetrix
@@ -64,6 +63,12 @@ namespace Tetrix
                         break;
                     case ConsoleKey.F5:
                         game.Playfield.Render(null);
+                        break;
+                    case ConsoleKey.Spacebar:
+                        if (game.IsPaused)
+                            game.Play();
+                        else
+                            game.Pause();
                         break;
                 }
             }
