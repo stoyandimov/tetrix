@@ -1,5 +1,3 @@
-using System;
-
 namespace Tetrix
 {
     // Represents a location within the Console.
