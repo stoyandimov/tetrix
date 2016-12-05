@@ -29,7 +29,7 @@ namespace Tetrix
 
         public static void Run(bool debug)
         {
-            Console.WriteLine("Welcome to TETRIX - the cross plat tetris");
+            Console.WriteLine("Welcome to TETRIX - the console ASCII tetris");
             // Present welcome message
             // Prompt for options
             // follow http://tetris.wikia.com/wiki/Tetris_Guideline

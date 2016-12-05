@@ -34,12 +34,12 @@ namespace Tetrix
                 RowRemoved(this, e);
         }
 
-        public event EventHandler TetroChanged;
+        public event EventHandler GameOver;
 
-        protected void OnTetroChanged(EventArgs e)
+        protected void OnGameOver(EventArgs e)
         {
-            if (TetroChanged != null)
-                TetroChanged(this, e);
+            if (GameOver != null)
+                GameOver(this, e);
         }
 
         // Constructor
@@ -64,6 +64,13 @@ namespace Tetrix
                 // Reset the current tetromino
                 ResetCurrentTetro();
 
+                // If the new tetro cannot move done - game over
+                if (!_curTetro.CanMoveDown())
+                    OnGameOver(new EventArgs());
+                else
+                    // Call progress to skip waiting for the next tetro
+                    Progress(state);
+                
                 return;
             }
 
@@ -126,9 +133,6 @@ namespace Tetrix
             for (int y = 1; y <= _h; y++)
             {
                 var row = _blocks.Where(b => b.Y == y);
-                Console.SetCursorPosition(0, 10 + y);
-                if (row.Count() > 0)
-                    Console.Write("Row: " + y + " boxes: " + row.Count()); 
                 int count = row.Count();
                 if (count == _w)
                     rowsToRemove.Add(y);
@@ -141,7 +145,7 @@ namespace Tetrix
                 var blocksToRemove = new List<Block>();
                 foreach(Block b in _blocks.Where(b => b.Y == row))
                     blocksToRemove.Add(b);
-                    
+
                 // Remove blocks
                 foreach(Block b in blocksToRemove)
                     _blocks.Remove(b);

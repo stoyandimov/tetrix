@@ -18,7 +18,10 @@ namespace Tetrix
         public bool Debug { get; private set; }
         
         // Playfield - the UI box container for all tetroes
-        public Playfield Playfield { get; private set;}
+        public Playfield Playfield { get; private set; }
+
+        // Scoreboard - the UI box container for next tetro and score
+        public Scoreboard Scoreboard { get; private set; }
 
         // Renders tetro mutations (that is movements and rotations)
         public Renderer Renderer { get; private set; }
@@ -36,9 +39,24 @@ namespace Tetrix
         {
             Debug = ctx.Debug;
             Renderer = new Renderer(Debug);
+            Scoreboard = new Scoreboard();
             Playfield = new Playfield(0, 0, Renderer, this);
+            Playfield.GameOver += GameOverHandler;
+            Playfield.RowRemoved += RowRemovedHandler;
         }
         
+        protected void GameOverHandler(object sender, EventArgs e)
+        {
+            _timer.Dispose();
+            _timer = null;
+            Console.WriteLine("Game Over");
+        }
+
+        protected void RowRemovedHandler(object sender, EventArgs e)
+        {
+            Scoreboard.IncrementScore();
+        }        
+
         // Starts the movement of tetroes
         public void Play()
         {
@@ -71,6 +89,8 @@ namespace Tetrix
 
             var curTetro = NextTetro;
             NextTetro = GenerateRandomTetro(); 
+
+            Scoreboard.UpdateNextTetro(NextTetro);
 
             return curTetro;
         }
