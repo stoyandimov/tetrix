@@ -11,8 +11,11 @@ namespace Tetrix
         public int DeletionsCounter = 0;
         public int MutationsCounter = 0;
 
+        TimeSpan _mutationProcessingTime;
+
         public Renderer(bool debug)
         {
+            _mutationProcessingTime = default(TimeSpan);
             Debug = debug;
         }
 
@@ -23,6 +26,7 @@ namespace Tetrix
             while(true) 
             {
                 TetroMutation m = Mutations.Take();
+                var Start = DateTime.Now;
                 m.RemoveRedundentBlockMutations();
                 foreach (Tuple<Block, int, int> pos in m.SourcePosition)
                 {
@@ -41,7 +45,8 @@ namespace Tetrix
 
                     AdditionsCounter++;
                 }
-
+                var End = DateTime.Now;
+               _mutationProcessingTime =  _mutationProcessingTime.Add(End - Start);
                 MutationsCounter++;
                 if (Debug)
                 {
@@ -51,6 +56,8 @@ namespace Tetrix
                     Console.Write("Deletions: " + DeletionsCounter);
                     Console.SetCursorPosition(20, 17);
                     Console.Write("Mutations: " + MutationsCounter);
+                    Console.SetCursorPosition(20, 18);
+                    Console.Write("Mutation mean time: " + _mutationProcessingTime.TotalMilliseconds / MutationsCounter + "ms/m");
                 }
 
                 Console.SetCursorPosition(0, 27);

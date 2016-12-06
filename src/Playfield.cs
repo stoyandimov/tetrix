@@ -102,7 +102,6 @@ namespace Tetrix
             _curTetro.BeginMutation();
             _curTetro.MoveRight();
             Renderer.Mutations.Add(_curTetro.EndMupation());
-
         }
 
         public void MoveDown()

@@ -16,21 +16,14 @@ namespace Tetrix
         // The Y (top) position
         public int Y { get; set; }
 
-        Renderer _renderer;
-        
         // Constructor
-        public Block(int x, int y, int color, char symbol, Renderer renderer, char debug)
+        public Block(int x, int y, int color, char symbol, char debug)
         {
-            _renderer = renderer;
             Symbol = symbol;
             Debug = debug;
             Y = y;
             X = x;
             Color = color;
-        }
-        public Block(int x, int y, int color, char symbol, Renderer renderer)
-            : this(x, y, color, symbol, renderer, symbol)
-        {
         }
     }
 }
