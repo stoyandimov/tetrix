@@ -57,7 +57,8 @@ namespace Tetrix
                     Console.SetCursorPosition(20, 17);
                     Console.Write("Mutations: " + MutationsCounter);
                     Console.SetCursorPosition(20, 18);
-                    Console.Write("Mutation mean time: " + _mutationProcessingTime.TotalMilliseconds / MutationsCounter + "ms/m");
+                    Console.Write("Mutation mean time: " + (
+                        _mutationProcessingTime.TotalMilliseconds / MutationsCounter).ToString("#.##") + " ms/m");
                 }
 
                 Console.SetCursorPosition(0, 27);

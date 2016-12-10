@@ -66,7 +66,7 @@ namespace Tetrix
 
                 // If the new tetro cannot move done - game over
                 if (!_curTetro.CanMoveDown())
-                    OnGameOver(new EventArgs());
+                    OnGameOver(EventArgs.Empty);
                 else
                     // Call progress to skip waiting for the next tetro
                     Progress(state);
@@ -137,6 +137,7 @@ namespace Tetrix
                     rowsToRemove.Add(y);
             }
 
+            var mutation = new TetroMutation();
             // If full rows remove the blocks
             foreach (int row in rowsToRemove)
             {
@@ -151,10 +152,14 @@ namespace Tetrix
 
                 // Shift upper blocks down
                 foreach(Block b in _blocks.Where(_b => _b.Y < row))
-                    b.Y++;
-
-                OnRowRemoved(new EventArgs());
+                {
+                    mutation.SourcePosition.Add(new Tuple<Block, int, int>(b, b.X, b.Y));
+                    mutation.TargetPosition.Add(new Tuple<Block, int, int>(b, b.X, ++b.Y));
+                }
+                
+                OnRowRemoved(EventArgs.Empty);
             }
+            Renderer.Mutations.Add(mutation);
         }
 
         // Check if a single block location (x, y) is available/empty 
