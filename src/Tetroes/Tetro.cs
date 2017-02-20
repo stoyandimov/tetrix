@@ -1,10 +1,11 @@
 using System;
+using Tetrix.UI;
 
 namespace Tetrix.Tetroes
 {
     public abstract class Tetro
     {
-        public Block[] Blocks { get; protected set; }        
+        public Block[] Blocks { get; protected set; }
         public int X { get; set; }
         public int Y { get; set; }
         public TetroTypes Type { get; protected set; }
@@ -13,7 +14,7 @@ namespace Tetrix.Tetroes
         public int Color { get; set; }
 
         // Container for the mutation state (used by BeginMutation(), EndMupation();)
-        private TetroMutation _mutationState;
+        private GridMutation _mutationState;
         
         protected Playfield _playfield;
 
@@ -83,17 +84,17 @@ namespace Tetrix.Tetroes
         // Registers the current location of the tetro blocks
         public void BeginMutation()
         {
-            _mutationState = new TetroMutation();
+            _mutationState = new GridMutation();
             foreach(Block b in Blocks)
-                _mutationState.SourcePosition.Add(new Tuple<Block, int, int>(b, b.X, b.Y));
+                _mutationState.SourcePosition.Add(new Tuple<Point, int, int>(b.Point, b.X, b.Y));
         }
 
         // Registers the current location of the tetro blocks and returns 
         // Tetro mutation with the old block locations and the new block locations 
-        public TetroMutation EndMupation()
+        public GridMutation EndMupation()
         {
             foreach(Block b in Blocks)
-                _mutationState.TargetPosition.Add(new Tuple<Block, int, int>(b, b.X, b.Y));
+                _mutationState.TargetPosition.Add(new Tuple<Point, int, int>(b.Point, b.X, b.Y));
 
             return _mutationState;
         }
@@ -114,7 +115,6 @@ namespace Tetrix.Tetroes
                 default: throw new ArgumentOutOfRangeException("type");
             }
         }
-
     }
   
 }

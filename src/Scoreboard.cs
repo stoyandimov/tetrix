@@ -10,34 +10,35 @@ namespace Tetrix
 
         public void IncrementScore()
         {
-            RenderScore(++_score);
+            _score++;
+            RenderScore();
         }
 
         public void UpdateNextTetro(Tetro next)
         {
             if (_nextTetro != null)
                 ClearTetro(_nextTetro);
-            
+
             _nextTetro = next;
             RenderNextTetro(_nextTetro);
         }
 
-        private void RenderScore(int score)
+        public void RenderScore()
         {
             Console.SetCursorPosition(15, 7);
-            Console.Write($"score: {score}");
+            Console.Write($"score: {_score}");
         }
 
         private void RenderNextTetro(Tetro tetro)
         {
-            Console.SetCursorPosition(18, 7);
+            Console.SetCursorPosition(15, 3);
             Console.Write("Next: ");
             foreach(Block b in tetro.Blocks)
             {
                 Console.ForegroundColor = (ConsoleColor) b.Color;
                 Console.SetCursorPosition(b.X + 20, b.Y + 5);
-                Console.Write(b.Symbol);
-                Console.ResetColor();                
+                Console.Write(b.Point.Symbol);
+                Console.ResetColor();
             }
         }
 

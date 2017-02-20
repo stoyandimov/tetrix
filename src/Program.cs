@@ -37,7 +37,7 @@ namespace Tetrix
             var game = new Game(new GameContext(debug));
             game.Play();
             bool run = true;
-            while(run)
+            while(run && !game.cts.IsCancellationRequested)
             {
                 ConsoleKeyInfo input = Console.ReadKey();
                 switch(input.Key)

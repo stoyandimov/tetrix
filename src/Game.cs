@@ -2,6 +2,7 @@ using System;
 using System.Threading;
 using System.Threading.Tasks;
 using Tetrix.Tetroes;
+using Tetrix.UI;
 
 namespace Tetrix
 {
@@ -49,22 +50,30 @@ namespace Tetrix
         {
             _timer.Dispose();
             _timer = null;
+            cts.Cancel();
+            Console.SetCursorPosition(15, 11);
             Console.WriteLine("Game Over");
+            Console.SetCursorPosition(0, 27);
         }
 
         protected void RowRemovedHandler(object sender, EventArgs e)
         {
             Scoreboard.IncrementScore();
-        }        
+        }
 
         // Starts the movement of tetroes
         public void Play()
         {
             _timer = new Timer(state => { Playfield.Progress(state); }, null, 0, 1000);
             Playfield.Render(null);
-            Task.Run(() => Renderer.ProcessUpdates());
+
+
+            cts = new CancellationTokenSource();
+            Task.Run(() => Renderer.ProcessUpdates(cts.Token));
+
             IsPaused = false;
         }
+        public CancellationTokenSource cts;
 
         // Pauses the movement of tetroes
         public void Pause()
@@ -90,7 +99,9 @@ namespace Tetrix
             var curTetro = NextTetro;
             NextTetro = GenerateRandomTetro(); 
 
+            // Update Scoreboard
             Scoreboard.UpdateNextTetro(NextTetro);
+            //Renderer.Mutations.Add(m);
 
             return curTetro;
         }

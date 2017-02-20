@@ -2,6 +2,8 @@ using System;
 using System.Linq;
 using System.Collections.Generic;
 using Tetrix.Tetroes;
+using Tetrix.UI;
+using System.Collections.Concurrent;
 
 namespace Tetrix
 {
@@ -26,7 +28,7 @@ namespace Tetrix
 
         Tetro _curTetro;
 
-        public event EventHandler RowRemoved;   
+        public event EventHandler RowRemoved;
 
         protected void OnRowRemoved(EventArgs e)
         {
@@ -70,7 +72,7 @@ namespace Tetrix
                 else
                     // Call progress to skip waiting for the next tetro
                     Progress(state);
-                
+
                 return;
             }
 
@@ -137,24 +139,27 @@ namespace Tetrix
                     rowsToRemove.Add(y);
             }
 
-            var mutation = new TetroMutation();
+            var mutation = new GridMutation();
             // If full rows remove the blocks
             foreach (int row in rowsToRemove)
             {
-                // Select blocks to remoev
+                // Select blocks to remove
                 var blocksToRemove = new List<Block>();
                 foreach(Block b in _blocks.Where(b => b.Y == row))
                     blocksToRemove.Add(b);
 
                 // Remove blocks
                 foreach(Block b in blocksToRemove)
+                {
                     _blocks.Remove(b);
+                    mutation.SourcePosition.Add(new Tuple<Point, int, int>(b.Point, b.X, b.Y));
+                }
 
                 // Shift upper blocks down
                 foreach(Block b in _blocks.Where(_b => _b.Y < row))
                 {
-                    mutation.SourcePosition.Add(new Tuple<Block, int, int>(b, b.X, b.Y));
-                    mutation.TargetPosition.Add(new Tuple<Block, int, int>(b, b.X, ++b.Y));
+                    mutation.SourcePosition.Add(new Tuple<Point, int, int>(b.Point, b.X, b.Y));
+                    mutation.TargetPosition.Add(new Tuple<Point, int, int>(b.Point, b.X, ++b.Y));
                 }
                 
                 OnRowRemoved(EventArgs.Empty);
@@ -192,72 +197,41 @@ namespace Tetrix
         public void Render(object state)
         {
             Console.Clear();
-            // Move to playfield height
-            for(int y = 0; y < Y; y++)
-                Console.WriteLine();
+            _game.Scoreboard.RenderScore();
 
+            var points = new List<Point>();
             // Top border line
-            
-            Indent(X);
-            Console.Write('+');
-            for(int x = 0; x < _w; x++)
-                Console.Write('-');
-            Console.WriteLine('+');
+            points.Add(new Point(X, Y) { Symbol = '+' });
+            for(int x = 1; x <= _w; x++)
+                points.Add(new Point(X + x, Y) { Symbol = '-' });
+            points.Add(new Point(X + _w + 1, Y) { Symbol = '+' });
             
             // For each row
-            for(int y = 0; y < _h; y++)
+            for(int y = 1; y <= _h; y++)
             {
-                Indent(X);
-                Console.Write('|'); // Left border line
-                
-                // For each column
-                for(int x = 0; x < _w; x++)
-                {
-                    bool write = false;
-                    foreach(Block b in _blocks)
-                    {
-                        // +X/Y for the playfield position (+1 accounting for borders)
-                        if (b.X == x + X + 1 && b.Y == y + Y + 1)
-                        {
-                            Console.ForegroundColor = (ConsoleColor)b.Color;
-                            Console.Write(_game.Debug ? b.Debug : b.Symbol);
-                            Console.ResetColor();
-                            write = true;
-                            break;
-                        }
-                    }
-                    // If no block output 'empty' or if debug output y 
-                    if (!write)
-                    {
-                        if (_game.Debug)
-                        {
-                            Console.ForegroundColor = ConsoleColor.DarkBlue;
-                            Console.Write(y.ToString().Last());
-                            Console.ResetColor();
-                        }
-                        else 
-                        {
-                            Console.Write(' ');
-                        }
+                // Left border line
+                points.Add(new Point(X, Y + y) { Symbol = '|' });
 
-                    }
-                }
-
-                Console.WriteLine('|'); // Right border line                
+                // Right border line
+                points.Add(new Point(X + _w + 1, y) { Symbol = '|' });
             }
 
             // Bottom border line
-            Indent(X);
-            Console.Write('+');
+            points.Add(new Point(X, Y + _h + 1) { Symbol = '+' });
             for(int x = 0; x < _w; x++)
-                Console.Write('-');
-            Console.WriteLine('+');
-        }
-        
-        private void Indent(int i)
-        {
-            for(int x = 0; x < i; x++)
-                Console.Write(' ');
+                points.Add(new Point(X + x + 1, Y + _h + 1) { Symbol = '-' });
+            points.Add(new Point(X + _w + 1 , Y + _h + 1) { Symbol = '+' });
+
+            // Generate single mutation for blocks and playfield borders
+            var mutation = new GridMutation();
+            foreach (Block b in _blocks)
+                mutation.TargetPosition.Add(new Tuple<Point, int, int>(b.Point, b.Point.X, b.Point.Y));
+
+            // Add playfield border points
+            foreach (Point p in points)
+                mutation.TargetPosition.Add(new Tuple<Point, int, int>(p, p.X, p.Y));
+
+            Renderer.Mutations.Add(mutation);
         }
 
     }
