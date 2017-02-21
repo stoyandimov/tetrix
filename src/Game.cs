@@ -30,9 +30,6 @@ namespace Tetrix
         // Indicate if the game is running or paused
         public bool IsPaused { get; set; }
 
-        // Kees track of the removed rows
-        int _score = 0;
-
         // Timer keeping the game speed
         Timer _timer;
 
@@ -40,7 +37,9 @@ namespace Tetrix
         {
             Debug = ctx.Debug;
             Renderer = new Renderer(Debug);
-            Scoreboard = new Scoreboard();
+
+            Scoreboard = new Scoreboard(Renderer);
+
             Playfield = new Playfield(0, 0, Renderer, this);
             Playfield.GameOver += GameOverHandler;
             Playfield.RowRemoved += RowRemovedHandler;
@@ -50,9 +49,9 @@ namespace Tetrix
         {
             _timer.Dispose();
             _timer = null;
+            Renderer.Mutations.Add(
+                TextHelper.Write(15, 11, "Game Over"));
             cts.Cancel();
-            Console.SetCursorPosition(15, 11);
-            Console.WriteLine("Game Over");
             Console.SetCursorPosition(0, 27);
         }
 

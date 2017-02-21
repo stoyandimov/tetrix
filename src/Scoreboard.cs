@@ -1,12 +1,19 @@
 using System;
 using Tetrix.Tetroes;
+using Tetrix.UI;
 
 namespace Tetrix
 {
     public class Scoreboard
     {
+        Renderer _renderer;
         Tetro _nextTetro;
         int _score;
+
+        public Scoreboard(Renderer renderer)
+        {
+            _renderer = renderer;
+        }
 
         public void IncrementScore()
         {
@@ -17,39 +24,36 @@ namespace Tetrix
         public void UpdateNextTetro(Tetro next)
         {
             if (_nextTetro != null)
-                ClearTetro(_nextTetro);
+                _renderer.Mutations.Add(ClearTetro(_nextTetro));
 
             _nextTetro = next;
-            RenderNextTetro(_nextTetro);
+            _renderer.Mutations.Add(RenderNextTetro(_nextTetro));
         }
 
         public void RenderScore()
         {
-            Console.SetCursorPosition(15, 7);
-            Console.Write($"score: {_score}");
+            var mutation = TextHelper.Write(15, 7, $"score: {_score}");
+            _renderer.Mutations.Add(mutation);
         }
 
-        private void RenderNextTetro(Tetro tetro)
+        private GridMutation RenderNextTetro(Tetro tetro)
         {
-            Console.SetCursorPosition(15, 3);
-            Console.Write("Next: ");
+            var m = TextHelper.Write(15, 3, "next:");
             foreach(Block b in tetro.Blocks)
-            {
-                Console.ForegroundColor = (ConsoleColor) b.Color;
-                Console.SetCursorPosition(b.X + 20, b.Y + 5);
-                Console.Write(b.Point.Symbol);
-                Console.ResetColor();
-            }
+                m.TargetPosition.Add(new Tuple<Point, int, int>(
+                        new Point(b.X + 17, b.Y + 3) { Symbol = b.Symbol, ForeColor = b.Point.ForeColor }, b.X + 17, b.Y + 2
+                    ));
+            return m;
         }
 
-        private void ClearTetro(Tetro tetro)
+        private GridMutation ClearTetro(Tetro tetro)
         {
-            Console.SetCursorPosition(18, 7);
+            var m = new GridMutation();
             foreach(Block b in tetro.Blocks)
-            {
-                Console.SetCursorPosition(b.X + 20, b.Y + 5);
-                Console.Write(' ' );
-            }
+                m.SourcePosition.Add(new Tuple<Point, int, int>(
+                        new Point(b.X + 17, b.Y + 3) { Symbol = b.Symbol }, b.X + 17, b.Y + 2
+                    ));
+            return m;
         }
     }
 }
