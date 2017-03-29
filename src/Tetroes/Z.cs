@@ -1,5 +1,3 @@
-using System;
-
 namespace Tetrix.Tetroes
 {
     public class Z : Tetro
@@ -29,8 +27,8 @@ namespace Tetrix.Tetroes
             if (Blocks[2].Y == Blocks[3].Y)
             {
                 if (!_playfield.AreLocationAvailale(
-                    new Tuple<int, int>(Blocks[0].X + 2, Blocks[0].Y),
-                    new Tuple<int, int>(Blocks[3].X, Blocks[3].Y - 2)))
+                    (Blocks[0].X + 2, Blocks[0].Y),
+                    (Blocks[3].X, Blocks[3].Y - 2)))
                         return;
                         
                 Blocks[0].X += 2;
@@ -40,8 +38,8 @@ namespace Tetrix.Tetroes
             else
             {
                 if (!_playfield.AreLocationAvailale(
-                    new Tuple<int, int>(Blocks[0].X - 2, Blocks[0].Y),
-                    new Tuple<int, int>(Blocks[3].X, Blocks[3].Y + 2)))
+                    (Blocks[0].X - 2, Blocks[0].Y),
+                    (Blocks[3].X, Blocks[3].Y + 2)))
                         return;
 
                 Blocks[0].X -= 2;

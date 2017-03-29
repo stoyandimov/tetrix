@@ -86,7 +86,7 @@ namespace Tetrix.Tetroes
         {
             _mutationState = new GridMutation();
             foreach(Block b in Blocks)
-                _mutationState.SourcePosition.Add(new Tuple<Point, int, int>(b.Point, b.X, b.Y));
+                _mutationState.SourcePosition.Add((b.Point, b.X, b.Y));
         }
 
         // Registers the current location of the tetro blocks and returns 
@@ -94,7 +94,7 @@ namespace Tetrix.Tetroes
         public GridMutation EndMupation()
         {
             foreach(Block b in Blocks)
-                _mutationState.TargetPosition.Add(new Tuple<Point, int, int>(b.Point, b.X, b.Y));
+                _mutationState.TargetPosition.Add((b.Point, b.X, b.Y));
 
             return _mutationState;
         }

@@ -3,7 +3,6 @@ using System.Linq;
 using System.Collections.Generic;
 using Tetrix.Tetroes;
 using Tetrix.UI;
-using System.Collections.Concurrent;
 
 namespace Tetrix
 {
@@ -152,14 +151,14 @@ namespace Tetrix
                 foreach(Block b in blocksToRemove)
                 {
                     _blocks.Remove(b);
-                    mutation.SourcePosition.Add(new Tuple<Point, int, int>(b.Point, b.X, b.Y));
+                    mutation.SourcePosition.Add((b.Point, b.X, b.Y));
                 }
 
                 // Shift upper blocks down
-                foreach(Block b in _blocks.Where(_b => _b.Y < row))
+                foreach(Block b in _blocks.Where(_b => _b.Y < row)) 
                 {
-                    mutation.SourcePosition.Add(new Tuple<Point, int, int>(b.Point, b.X, b.Y));
-                    mutation.TargetPosition.Add(new Tuple<Point, int, int>(b.Point, b.X, ++b.Y));
+                    mutation.SourcePosition.Add((b.Point, b.X, b.Y));
+                    mutation.TargetPosition.Add((b.Point, b.X, ++b.Y));
                 }
                 
                 OnRowRemoved(EventArgs.Empty);
@@ -184,10 +183,10 @@ namespace Tetrix
         }
 
         // Returns true if ALL locations are available
-        public bool AreLocationAvailale(params Tuple<int, int>[] locations)
+        public bool AreLocationAvailale(params (int, int)[] locations)
         {
-            foreach (var pos in locations)
-                if (!IsLocationAvailable(pos.Item1, pos.Item2))
+            foreach ((int x, int y) in locations)
+                if (!IsLocationAvailable(x, y))
                     return false;
 
             return true;
@@ -225,11 +224,11 @@ namespace Tetrix
             // Generate single mutation for blocks and playfield borders
             var mutation = new GridMutation();
             foreach (Block b in _blocks)
-                mutation.TargetPosition.Add(new Tuple<Point, int, int>(b.Point, b.Point.X, b.Point.Y));
+                mutation.TargetPosition.Add((b.Point, b.Point.X, b.Point.Y));
 
             // Add playfield border points
             foreach (Point p in points)
-                mutation.TargetPosition.Add(new Tuple<Point, int, int>(p, p.X, p.Y));
+                mutation.TargetPosition.Add((p, p.X, p.Y));
 
             Renderer.Mutations.Add(mutation);
         }

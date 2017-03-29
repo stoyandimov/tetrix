@@ -40,7 +40,7 @@ namespace Tetrix
         {
             var m = TextHelper.Write(15, 3, "next:");
             foreach(Block b in tetro.Blocks)
-                m.TargetPosition.Add(new Tuple<Point, int, int>(
+                m.TargetPosition.Add((
                         new Point(b.X + 17, b.Y + 3) { Symbol = b.Symbol, ForeColor = b.Point.ForeColor }, b.X + 17, b.Y + 2
                     ));
             return m;
@@ -50,7 +50,7 @@ namespace Tetrix
         {
             var m = new GridMutation();
             foreach(Block b in tetro.Blocks)
-                m.SourcePosition.Add(new Tuple<Point, int, int>(
+                m.SourcePosition.Add((
                         new Point(b.X + 17, b.Y + 3) { Symbol = b.Symbol }, b.X + 17, b.Y + 2
                     ));
             return m;

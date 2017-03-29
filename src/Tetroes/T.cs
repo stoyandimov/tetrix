@@ -1,5 +1,3 @@
-using System;
-
 namespace Tetrix.Tetroes
 {
     public class T : Tetro
@@ -30,9 +28,9 @@ namespace Tetrix.Tetroes
             if (Blocks[0].Y < Blocks[2].Y)
             {
                 if (!_playfield.AreLocationAvailale(
-                    new Tuple<int, int>(Blocks[1].X, Blocks[1].Y - 2),
-                    new Tuple<int, int>(Blocks[2].X - 1, Blocks[2].Y - 1),
-                    new Tuple<int, int>(Blocks[3].X - 2, Blocks[3].Y)))
+                    (Blocks[1].X, Blocks[1].Y - 2),
+                    (Blocks[2].X - 1, Blocks[2].Y - 1),
+                    (Blocks[3].X - 2, Blocks[3].Y)))
                         return;
                         
                 Blocks[1].Y -= 2;
@@ -44,9 +42,9 @@ namespace Tetrix.Tetroes
             else if (Blocks[0].X > Blocks[2].X)
             {
                 if (!_playfield.AreLocationAvailale(
-                    new Tuple<int, int>(Blocks[1].X + 2, Blocks[1].Y),
-                    new Tuple<int, int>(Blocks[2].X + 1, Blocks[2].Y - 1),
-                    new Tuple<int, int>(Blocks[3].X, Blocks[3].Y - 2)))
+                    (Blocks[1].X + 2, Blocks[1].Y),
+                    (Blocks[2].X + 1, Blocks[2].Y - 1),
+                    (Blocks[3].X, Blocks[3].Y - 2)))
                         return;
 
                 Blocks[1].X += 2;
@@ -58,9 +56,9 @@ namespace Tetrix.Tetroes
             else if (Blocks[0].Y > Blocks[2].Y)
             {
                 if (!_playfield.AreLocationAvailale(
-                    new Tuple<int, int>(Blocks[1].X, Blocks[1].Y + 2),
-                    new Tuple<int, int>(Blocks[2].X + 1, Blocks[2].Y + 1),
-                    new Tuple<int, int>(Blocks[3].X + 2, Blocks[3].Y)))
+                    (Blocks[1].X, Blocks[1].Y + 2),
+                    (Blocks[2].X + 1, Blocks[2].Y + 1),
+                    (Blocks[3].X + 2, Blocks[3].Y)))
                         return;
 
                 Blocks[1].Y += 2;
@@ -72,9 +70,9 @@ namespace Tetrix.Tetroes
             else 
             {
                 if (!_playfield.AreLocationAvailale(
-                    new Tuple<int, int>(Blocks[1].X - 2, Blocks[1].Y),
-                    new Tuple<int, int>(Blocks[2].X - 1, Blocks[2].Y + 1),
-                    new Tuple<int, int>(Blocks[3].X, Blocks[3].Y + 2)))
+                    (Blocks[1].X - 2, Blocks[1].Y),
+                    (Blocks[2].X - 1, Blocks[2].Y + 1),
+                    (Blocks[3].X, Blocks[3].Y + 2)))
                         return;
 
                 Blocks[1].X -= 2;

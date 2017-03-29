@@ -8,7 +8,7 @@ namespace Tetrix.UI
         {
             var m = new GridMutation();
             for (int i = 0; i < text.Length; i++)
-                m.TargetPosition.Add(new Tuple<Point, int, int>(
+                m.TargetPosition.Add((
                     new Point(x + i, y) { Symbol = text[i] }, x + i, y
                 ));
 

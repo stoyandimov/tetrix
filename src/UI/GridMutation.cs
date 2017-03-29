@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -6,15 +5,15 @@ namespace Tetrix.UI
 {
     public class GridMutation
     {
-        public List<Tuple<Point, int, int>> SourcePosition { get; private set; } = new List<Tuple<Point, int, int>>();
-        public List<Tuple<Point, int, int>> TargetPosition { get; private set; } = new List<Tuple<Point, int, int>>();
+        public List<(Point, int, int)> SourcePosition { get; private set; } = new List<(Point, int, int)>();
+        public List<(Point, int, int)> TargetPosition { get; private set; } = new List<(Point, int, int)>();
 
         // Remove all blocks mutations that won't affect the GUI
         public void RemoveRedundentBlockMutations()
         {
             // Make a collection of blocks that won't move in this mutation
             var redundentBlockMutations = new List<Point>();
-            foreach(Tuple<Point, int, int> targetPos in TargetPosition)
+            foreach((Point p, int x, int y) targetPos in TargetPosition)
             {
                 redundentBlockMutations.AddRange(SourcePosition.Where(
                     s => s.Item1 == targetPos.Item1

@@ -29,19 +29,19 @@ namespace Tetrix.UI
                 GridMutation m = Mutations.Take();
                 var Start = DateTime.Now;
                 m.RemoveRedundentBlockMutations(); // Remove all blocks mutations that won't affect the GUI
-                foreach (Tuple<Point, int, int> pos in m.SourcePosition)
+                foreach ((Point p, int x, int y) in m.SourcePosition)
                 {
-                    Console.SetCursorPosition(pos.Item2, pos.Item3);
+                    Console.SetCursorPosition(x, y);
                     Console.Write(' ');
 
                     DeletionsCounter++;
                 }
 
-                foreach (Tuple<Point, int, int> pos in m.TargetPosition)
+                foreach ((Point p, int x, int y) in m.TargetPosition)
                 {
-                    Console.SetCursorPosition(pos.Item2, pos.Item3);
-                    Console.ForegroundColor = (ConsoleColor) pos.Item1.ForeColor;
-                    Console.Write(pos.Item1.Symbol);
+                    Console.SetCursorPosition(x, y);
+                    Console.ForegroundColor = (ConsoleColor) p.ForeColor;
+                    Console.Write(p.Symbol);
                     Console.ResetColor();
 
                     AdditionsCounter++;
