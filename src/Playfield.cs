@@ -148,22 +148,24 @@ namespace Tetrix
                     blocksToRemove.Add(b);
 
                 // Remove blocks
+                var removeMutation = new GridMutation();
                 foreach(Block b in blocksToRemove)
                 {
                     _blocks.Remove(b);
-                    mutation.SourcePosition.Add((b.Point, b.X, b.Y));
+                    removeMutation.SourcePosition.Add((b.Point, b.X, b.Y));
                 }
 
                 // Shift upper blocks down
+                var shiftDownMutation = new GridMutation();
                 foreach(Block b in _blocks.Where(_b => _b.Y < row)) 
                 {
-                    mutation.SourcePosition.Add((b.Point, b.X, b.Y));
-                    mutation.TargetPosition.Add((b.Point, b.X, ++b.Y));
+                    shiftDownMutation.SourcePosition.Add((b.Point, b.X, b.Y));
+                    shiftDownMutation.TargetPosition.Add((b.Point, b.X, ++b.Y));
                 }
-                
+                Renderer.Mutations.Add(removeMutation);
+                Renderer.Mutations.Add(shiftDownMutation);
                 OnRowRemoved(EventArgs.Empty);
             }
-            Renderer.Mutations.Add(mutation);
         }
 
         // Check if a single block location (x, y) is available/empty 
