@@ -63,8 +63,8 @@ namespace Tetrix
         // Starts the movement of tetroes
         public void Play()
         {
-            _timer = new Timer(state => { Playfield.Progress(state); }, null, 0, 1000);
-            Playfield.Render(null);
+            _timer = new Timer(Playfield.Progress, null, 0, 100);
+            Playfield.Render();
 
 
             cts = new CancellationTokenSource();
@@ -100,7 +100,6 @@ namespace Tetrix
 
             // Update Scoreboard
             Scoreboard.UpdateNextTetro(NextTetro);
-            //Renderer.Mutations.Add(m);
 
             return curTetro;
         }

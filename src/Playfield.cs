@@ -195,7 +195,7 @@ namespace Tetrix
         }
 
         // Renders the entire screen
-        public void Render(object state)
+        public void Render()
         {
             Console.Clear();
             _game.Scoreboard.RenderScore();

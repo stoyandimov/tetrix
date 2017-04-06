@@ -36,7 +36,7 @@ namespace Tetrix.Tetroes
         public void MoveRight()
         {
             foreach(Block b in Blocks)
-                b.X++;   
+                b.X++;
         }
 
         public void MoveDown()
@@ -102,6 +102,7 @@ namespace Tetrix.Tetroes
         // Creates tetromino
         public static Tetro CreateTetro(TetroTypes type, Playfield playfield)
         {
+            //return new I(playfield.X + 4, playfield.Y + 1, playfield);
             switch(type)
             {
                 case TetroTypes.I: return new I(playfield.X + 4, playfield.Y + 1, playfield);

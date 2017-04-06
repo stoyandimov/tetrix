@@ -22,9 +22,26 @@ namespace Tetrix.UI
             Debug = debug;
         }
 
+        public void RenderDebug(object state)
+        {
+            if (Debug)
+            {
+                this.Mutations.Add(TextHelper.WriteLines(15, 10 , new string[] {
+                    "Rendering:",
+                    "----------",
+                    "Additions: " + AdditionsCounter,
+                    "Deletions: " + DeletionsCounter,
+                    "Mutations: " + MutationsCounter,
+                    "Mutation mean time: " + (
+                    _mutationProcessingTime.TotalMilliseconds / MutationsCounter).ToString("#.##") + " ms/m"
+                }));
+            }
+        }
+
         public void ProcessUpdates(CancellationToken cancellationToken)
         {
-            while(true) 
+            var dTimer = new Timer(RenderDebug, null, 0, 500);
+            while(true)
             {
                 GridMutation m = Mutations.Take();
                 var Start = DateTime.Now;
@@ -39,34 +56,21 @@ namespace Tetrix.UI
 
                 foreach ((Point p, int x, int y) in m.TargetPosition)
                 {
+                    if (Console.ForegroundColor != (ConsoleColor) p.ForeColor)
+                        Console.ForegroundColor = (ConsoleColor) p.ForeColor;
                     Console.SetCursorPosition(x, y);
-                    Console.ForegroundColor = (ConsoleColor) p.ForeColor;
                     Console.Write(p.Symbol);
-                    Console.ResetColor();
 
                     AdditionsCounter++;
                 }
                 var End = DateTime.Now;
                _mutationProcessingTime =  _mutationProcessingTime.Add(End - Start);
                 MutationsCounter++;
-                if (Debug)
-                {
-                    Console.SetCursorPosition(20, 15);
-                    Console.Write("Additions: " + AdditionsCounter);
-                    Console.SetCursorPosition(20, 16);
-                    Console.Write("Deletions: " + DeletionsCounter);
-                    Console.SetCursorPosition(20, 17);
-                    Console.Write("Mutations: " + MutationsCounter);
-                    Console.SetCursorPosition(20, 18);
-                    Console.Write("Mutation mean time: " + (
-                        _mutationProcessingTime.TotalMilliseconds / MutationsCounter).ToString("#.##") + " ms/m");
-                }
 
-                Console.SetCursorPosition(0, 27);
-                
                 if (cancellationToken.IsCancellationRequested)
                     break;
             }
+            dTimer.Dispose();
         }
     }
 }

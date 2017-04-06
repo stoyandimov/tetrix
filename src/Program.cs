@@ -23,7 +23,7 @@ namespace Tetrix
                 Console.WriteLine(ex);
                 Console.WriteLine();
                 Console.WriteLine("Press [enter] to exit;");
-                Console.ReadLine();                
+                Console.ReadLine();
             }
         }
 
@@ -36,10 +36,11 @@ namespace Tetrix
 
             var game = new Game(new GameContext(debug));
             game.Play();
+            
             bool run = true;
             while(run && !game.cts.IsCancellationRequested)
             {
-                ConsoleKeyInfo input = Console.ReadKey();
+                ConsoleKeyInfo input = Console.ReadKey(true);
                 switch(input.Key)
                 {
                     case ConsoleKey.Q:
@@ -62,7 +63,7 @@ namespace Tetrix
                         game.ToggleDebug();
                         break;
                     case ConsoleKey.F5:
-                        game.Playfield.Render(null);
+                        game.Playfield.Render();
                         break;
                     case ConsoleKey.Spacebar:
                         if (game.IsPaused)
