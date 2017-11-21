@@ -116,6 +116,10 @@ namespace Tetrix
                     case ConsoleKey.F5:
                         this.Render();
                         break;
+                    case ConsoleKey.D:
+                        Renderer.Debug = !Renderer.Debug;
+                        this.Render();
+                        break;
                     case ConsoleKey.Enter:
                         if (_game.IsGameOver)
                             run = false;
@@ -238,6 +242,7 @@ namespace Tetrix
         {
             Console.Clear();
             _game.Scoreboard.RenderScore();
+            _game.Scoreboard.UpdateNextTetro(_game.NextTetro);
 
             var points = new List<Point>();
             // Top border line
