@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Concurrent;
 using System.Threading;
+using System.Threading.Tasks;
 
 namespace Tetrix.UI
 {
@@ -12,65 +13,88 @@ namespace Tetrix.UI
         public int DeletionsCounter = 0;
         public int MutationsCounter = 0;
 
+        CancellationTokenSource _cts;
+
         TimeSpan _mutationProcessingTime;
 
         public BlockingCollection<GridMutation> Mutations { get; private set; }  = new BlockingCollection<GridMutation>();  
 
-        public Renderer(bool debug)
+        public Renderer()
         {
             _mutationProcessingTime = default(TimeSpan);
-            Debug = debug;
+            _cts = new CancellationTokenSource();
         }
 
         public void RenderDebug(object state)
         {
-            if (Debug)
-            {
-                this.Mutations.Add(TextHelper.WriteLines(15, 10 , new string[] {
-                    "Rendering:",
-                    "----------",
-                    "Additions: " + AdditionsCounter,
-                    "Deletions: " + DeletionsCounter,
-                    "Mutations: " + MutationsCounter,
-                    "Mutation mean time: " + (
-                    _mutationProcessingTime.TotalMilliseconds / MutationsCounter).ToString("#.##") + " ms/m"
-                }));
-            }
+            if (!Debug) return;
+
+            this.Mutations.Add(TextHelper.WriteLines(15, 15, new string[] {
+                "Rendering:",
+                "----------",
+                "Additions: " + AdditionsCounter,
+                "Deletions: " + DeletionsCounter,
+                "Mutations: " + MutationsCounter,
+                "Mutation mean time: " + (
+                _mutationProcessingTime.TotalMilliseconds / MutationsCounter).ToString("#.##") + " ms/m"
+            }));
+        }
+
+        public void BeginRendering()
+        {
+            Clear();
+            Task.Run(() => this.ProcessUpdates(_cts.Token));
+        }
+
+        public void Clear()
+            => Console.Clear();
+
+        public void EndRendering()
+        {
+            if (!_cts.IsCancellationRequested)
+                _cts.Cancel();
         }
 
         public void ProcessUpdates(CancellationToken cancellationToken)
         {
             var dTimer = new Timer(RenderDebug, null, 0, 500);
-            while(true)
+            while (true)
             {
                 GridMutation m = Mutations.Take();
                 var Start = DateTime.Now;
-                m.RemoveRedundentBlockMutations(); // Remove all blocks mutations that won't affect the GUI
+                // Remove all blocks mutations that won't affect the GUI
+                m.RemoveRedundentBlockMutations();
+                // Clears blocks after move
                 foreach ((Point p, int x, int y) in m.SourcePosition)
                 {
                     Console.SetCursorPosition(x, y);
                     Console.Write(' ');
-
                     DeletionsCounter++;
                 }
-
+                // Renders the block on the new position
                 foreach ((Point p, int x, int y) in m.TargetPosition)
                 {
                     if (Console.ForegroundColor != (ConsoleColor) p.ForeColor)
                         Console.ForegroundColor = (ConsoleColor) p.ForeColor;
                     Console.SetCursorPosition(x, y);
                     Console.Write(p.Symbol);
-
                     AdditionsCounter++;
                 }
                 var End = DateTime.Now;
                _mutationProcessingTime =  _mutationProcessingTime.Add(End - Start);
                 MutationsCounter++;
-
                 if (cancellationToken.IsCancellationRequested)
                     break;
             }
             dTimer.Dispose();
+            Debug = false;
         }
+
+        public void Write(int x, int y, string text)
+            => Mutations.Add(TextHelper.Write(x, y, text));
+
+        public void WriteLines(int x, int y, string[] lines)
+            => Mutations.Add(TextHelper.WriteLines(x, y, lines));
+
     }
 }

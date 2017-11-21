@@ -1,10 +1,10 @@
 namespace Tetrix
 {
-    public class GameContext
+    public class GameSettings
     {
         public bool Debug { get; private set; }
 
-        public GameContext(bool debug)
+        public GameSettings(bool debug)
         {
             Debug = debug;
         }

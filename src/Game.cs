@@ -1,6 +1,5 @@
 using System;
 using System.Threading;
-using System.Threading.Tasks;
 using Tetrix.Tetroes;
 using Tetrix.UI;
 
@@ -8,6 +7,8 @@ namespace Tetrix
 {
     public class Game
     {
+        // Indicates if the game/playfield is still playable
+        public bool IsGameOver { get; private set; } = false;
 
         // Used to generate random INTs when creating tetrominoes
         public Random Randomizer { get; private set;} = new Random();
@@ -17,7 +18,7 @@ namespace Tetrix
 
         // When set to true, displays the block's index instead of #
         public bool Debug { get; private set; }
-        
+
         // Playfield - the UI box container for all tetroes
         public Playfield Playfield { get; private set; }
 
@@ -30,28 +31,73 @@ namespace Tetrix
         // Indicate if the game is running or paused
         public bool IsPaused { get; set; }
 
-        // Timer keeping the game speed
-        Timer _timer;
+        private Timer Timer { get; set; }
 
-        public Game(GameContext ctx)
+        public Game(GameSettings settings)
         {
-            Debug = ctx.Debug;
-            Renderer = new Renderer(Debug);
-
+            Debug = settings.Debug;
+            Renderer = new Renderer();
             Scoreboard = new Scoreboard(Renderer);
-
-            Playfield = new Playfield(0, 0, Renderer, this);
-            Playfield.GameOver += GameOverHandler;
-            Playfield.RowRemoved += RowRemovedHandler;
         }
-        
+
+        public void Start()
+        {
+            try 
+            {
+                Renderer.BeginRendering();
+                var mainMenu = new MainMenu(Renderer);
+
+                while(!IsGameOver)
+                {
+                    MenuOptions next = mainMenu.WhatsNext();
+                    switch(next)
+                    {
+                        case MenuOptions.Exit:
+                            IsGameOver = true;
+                            break;
+                        case MenuOptions.StartGame:
+                            Playfield = new Playfield(0, 0, Renderer, this);
+                            Playfield.GameOver += GameOverHandler;
+                            Playfield.RowRemoved += RowRemovedHandler;
+                            Timer = new Timer(Playfield.Progress, null, 0, 100);
+                            Renderer.Clear();
+                            Playfield.Start(); // blocks
+                            // game finished
+                            Renderer.EndRendering();
+                            break;
+                    }
+                }
+                Renderer.Clear();
+                Renderer.Write(0, 0, "Exiting...");
+            }
+            catch (Exception ex)
+            {
+                Console.Clear();
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine("E: Something went wrong");
+                Console.WriteLine();
+                Console.WriteLine(ex);
+                Console.WriteLine();
+                Console.WriteLine("Press [enter] to exit;");
+                Console.ReadLine();
+            }
+        }
+
+        public void Shutdown()
+        {
+            Thread.Sleep(1500);
+        }
+
         protected void GameOverHandler(object sender, EventArgs e)
         {
-            _timer.Dispose();
-            _timer = null;
             Renderer.Mutations.Add(
-                TextHelper.Write(15, 11, "Game Over"));
-            cts.Cancel();
+                TextHelper.Write(19, 11, "Game Over"));
+            Renderer.Mutations.Add(
+                TextHelper.Write(13, 13, "[Press 'Enter' to exit]"));
+
+            Timer.Dispose();
+            IsGameOver = true;
+
             Console.SetCursorPosition(0, 27);
         }
 
@@ -60,26 +106,10 @@ namespace Tetrix
             Scoreboard.IncrementScore();
         }
 
-        // Starts the movement of tetroes
-        public void Play()
-        {
-            _timer = new Timer(Playfield.Progress, null, 0, 100);
-            Playfield.Render();
-
-
-            cts = new CancellationTokenSource();
-            Task.Run(() => Renderer.ProcessUpdates(cts.Token));
-
-            IsPaused = false;
-        }
-        public CancellationTokenSource cts;
-
         // Pauses the movement of tetroes
         public void Pause()
         {
             IsPaused = true;
-            _timer.Dispose();
-            _timer = null;
         }
 
         // Switch between # and n (block index) when visualizing blocks

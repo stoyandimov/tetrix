@@ -3,6 +3,7 @@ using System.Linq;
 using System.Collections.Generic;
 using Tetrix.Tetroes;
 using Tetrix.UI;
+using System.Threading;
 
 namespace Tetrix
 {
@@ -30,18 +31,12 @@ namespace Tetrix
         public event EventHandler RowRemoved;
 
         protected void OnRowRemoved(EventArgs e)
-        {
-            if (RowRemoved != null)
-                RowRemoved(this, e);
-        }
+            => RowRemoved?.Invoke(this, e);
 
         public event EventHandler GameOver;
 
         protected void OnGameOver(EventArgs e)
-        {
-            if (GameOver != null)
-                GameOver(this, e);
-        }
+             => GameOver?.Invoke(this, e);
 
         // Constructor
         public Playfield(int x, int y, Renderer renderer, Game game)
@@ -67,10 +62,10 @@ namespace Tetrix
 
                 // If the new tetro cannot move done - game over
                 if (!_curTetro.CanMoveDown())
+                {
                     OnGameOver(EventArgs.Empty);
-                else
-                    // Call progress to skip waiting for the next tetro
-                    Progress(state);
+                    GameOver = null;
+                }
 
                 return;
             }
@@ -83,6 +78,50 @@ namespace Tetrix
             _curTetro.BeginMutation();
             _curTetro.Rotate();
             Renderer.Mutations.Add(_curTetro.EndMupation());
+        }
+
+        internal void Start()
+        {
+            Renderer.Debug = _game.Debug;
+            this.Render();
+
+            bool run = true;
+            while(run)
+            {
+                ConsoleKeyInfo input = Console.ReadKey(true);
+
+                // Exits at game over when pressing 'Enter'
+                if (_game.IsGameOver && input.Key != ConsoleKey.Enter)
+                    continue;
+
+                switch(input.Key)
+                {
+                    case ConsoleKey.Q:
+                    case ConsoleKey.X:
+                        run = false;
+                        GameOver?.Invoke(this, EventArgs.Empty);
+                        break;
+                    case ConsoleKey.UpArrow:
+                        this.Rotate();
+                        break;
+                    case ConsoleKey.LeftArrow:
+                        this.MoveLeft();
+                        break;
+                    case ConsoleKey.RightArrow:
+                        this.MoveRight();
+                        break;
+                    case ConsoleKey.DownArrow:
+                        this.MoveDown();
+                        break;
+                    case ConsoleKey.F5:
+                        this.Render();
+                        break;
+                    case ConsoleKey.Enter:
+                        if (_game.IsGameOver)
+                            run = false;
+                        break;
+                }
+            }
         }
 
         public void MoveLeft()
