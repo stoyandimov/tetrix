@@ -7,6 +7,9 @@ namespace Tetrix
 {
     public class Game
     {
+
+        public GameSettings Settings { get; set; }
+
         // Indicates if the game/playfield is still playable
         public bool IsGameOver { get; private set; } = false;
 
@@ -15,9 +18,6 @@ namespace Tetrix
 
         // The next tetromino
         public Tetro NextTetro { get; private set; }
-
-        // When set to true, displays the block's index instead of #
-        public bool Debug { get; private set; }
 
         // Playfield - the UI box container for all tetroes
         public Playfield Playfield { get; private set; }
@@ -35,7 +35,7 @@ namespace Tetrix
 
         public Game(GameSettings settings)
         {
-            Debug = settings.Debug;
+            Settings = settings;
             Renderer = new Renderer();
             Scoreboard = new Scoreboard(Renderer);
         }
@@ -59,7 +59,7 @@ namespace Tetrix
                             Playfield = new Playfield(0, 0, Renderer, this);
                             Playfield.GameOver += GameOverHandler;
                             Playfield.RowRemoved += RowRemovedHandler;
-                            Timer = new Timer(Playfield.Progress, null, 0, 100);
+                            Timer = new Timer(Playfield.Progress, null, 0, 1100 - (Settings.Speed * 100));
                             Renderer.Clear();
                             Playfield.Start(); // blocks
                             // game finished
@@ -115,8 +115,8 @@ namespace Tetrix
         // Switch between # and n (block index) when visualizing blocks
         public void ToggleDebug()
         {
-            Debug = !Debug;
-            Renderer.Debug = Debug;
+            Settings.Debug = !Settings.Debug;
+            Renderer.Debug = Settings.Debug;
         }
 
         public Tetro GetNextTetro()

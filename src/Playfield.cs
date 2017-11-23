@@ -3,7 +3,6 @@ using System.Linq;
 using System.Collections.Generic;
 using Tetrix.Tetroes;
 using Tetrix.UI;
-using System.Threading;
 
 namespace Tetrix
 {
@@ -82,7 +81,7 @@ namespace Tetrix
 
         internal void Start()
         {
-            Renderer.Debug = _game.Debug;
+            Renderer.Debug = _game.Settings.Debug;
             this.Render();
 
             bool run = true;
@@ -246,26 +245,26 @@ namespace Tetrix
 
             var points = new List<Point>();
             // Top border line
-            points.Add(new Point(X, Y) { Symbol = '+' });
+            points.Add(new Point(X, Y) { Symbol = '\u2554' });
             for(int x = 1; x <= _w; x++)
-                points.Add(new Point(X + x, Y) { Symbol = '-' });
-            points.Add(new Point(X + _w + 1, Y) { Symbol = '+' });
+                points.Add(new Point(X + x, Y) { Symbol = '\u2550' });
+            points.Add(new Point(X + _w + 1, Y) { Symbol = '\u2557' });
             
             // For each row
             for(int y = 1; y <= _h; y++)
             {
                 // Left border line
-                points.Add(new Point(X, Y + y) { Symbol = '|' });
+                points.Add(new Point(X, Y + y) { Symbol = '\u2551' });
 
                 // Right border line
-                points.Add(new Point(X + _w + 1, y) { Symbol = '|' });
+                points.Add(new Point(X + _w + 1, y) { Symbol = '\u2551' });
             }
 
             // Bottom border line
-            points.Add(new Point(X, Y + _h + 1) { Symbol = '+' });
+            points.Add(new Point(X, Y + _h + 1) { Symbol = '\u255A' });
             for(int x = 0; x < _w; x++)
-                points.Add(new Point(X + x + 1, Y + _h + 1) { Symbol = '-' });
-            points.Add(new Point(X + _w + 1 , Y + _h + 1) { Symbol = '+' });
+                points.Add(new Point(X + x + 1, Y + _h + 1) { Symbol = '\u2550' });
+            points.Add(new Point(X + _w + 1, Y + _h + 1) { Symbol = '\u255D' });
 
             // Generate single mutation for blocks and playfield borders
             var mutation = new GridMutation();

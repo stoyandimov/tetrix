@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Text;
 
 namespace Tetrix
 {
@@ -6,13 +7,26 @@ namespace Tetrix
     {
         public static void Main(string[] args)
         {
-            // Show number instead of blocks for tetroes
-            bool debug = args.Contains("--debug");
-            var settings = new GameSettings(debug);
+            PrepareConsole();
+
+            var settings = new GameSettings(args);
             var game = new Game(settings);
             game.Start();
             game.Shutdown();
-            System.Console.Clear();
+
+            ResetConsole();
+        }
+
+        private static void PrepareConsole()
+        {
+            Console.OutputEncoding = Encoding.UTF8;
+            Console.CancelKeyPress += (s, e) => ResetConsole();
+        }
+
+        private static void ResetConsole()
+        {
+            Console.Clear();
+            Console.ResetColor();
         }
     }
 }

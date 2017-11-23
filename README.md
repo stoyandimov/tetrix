@@ -1,5 +1,5 @@
 # Tetrix
-ascii console tetris
+unicode console tetris
 
 ## Requirements
 `.NET Core` v1.1 or higher (downloadable form [here] (https://www.microsoft.com/net/download/core))
