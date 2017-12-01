@@ -18,14 +18,14 @@ namespace Tetrix
 
         public int Y;
 
-        // List of all block from all tetrominoes
-        IList<Block> _blocks = new List<Block>();
-
         Game _game;
 
         public Renderer Renderer { get; private set; }
 
         Tetro _curTetro;
+
+        // List of all block from all tetrominoes
+        IList<Block> _blocks = new List<Block>();
 
         public event EventHandler RowRemoved;
 
@@ -194,15 +194,16 @@ namespace Tetrix
                 foreach(Block b in blocksToRemove)
                 {
                     _blocks.Remove(b);
-                    removeMutation.SourcePosition.Add((b.Point, b.X, b.Y));
+                    removeMutation.AddSource(b);
                 }
 
                 // Shift upper blocks down
                 var shiftDownMutation = new GridMutation();
-                foreach(Block b in _blocks.Where(_b => _b.Y < row)) 
+                foreach(Block b in _blocks.Where(_b => _b.Y < row))
                 {
-                    shiftDownMutation.SourcePosition.Add((b.Point, b.X, b.Y));
-                    shiftDownMutation.TargetPosition.Add((b.Point, b.X, ++b.Y));
+                    shiftDownMutation.AddSource(new Point(b.X, b.Y));
+                    ++b.Y;
+                    shiftDownMutation.AddTarget(b);
                 }
                 Renderer.Mutations.Add(removeMutation);
                 Renderer.Mutations.Add(shiftDownMutation);
@@ -239,41 +240,43 @@ namespace Tetrix
         // Renders the entire screen
         public void Render()
         {
-            Console.Clear();
+            Renderer.Clear();
+
             _game.Scoreboard.RenderScore();
             _game.Scoreboard.UpdateNextTetro(_game.NextTetro);
 
-            var points = new List<Point>();
+            var points = new List<DrawablePoint>();
+
             // Top border line
-            points.Add(new Point(X, Y) { Symbol = '\u2554' });
+            points.Add(new DrawablePoint(X, Y, '\u2554' ));
             for(int x = 1; x <= _w; x++)
-                points.Add(new Point(X + x, Y) { Symbol = '\u2550' });
-            points.Add(new Point(X + _w + 1, Y) { Symbol = '\u2557' });
+                points.Add(new DrawablePoint(X + x, Y, '\u2550'));
+            points.Add(new DrawablePoint(X + _w + 1, Y, '\u2557' ));
             
             // For each row
             for(int y = 1; y <= _h; y++)
             {
                 // Left border line
-                points.Add(new Point(X, Y + y) { Symbol = '\u2551' });
+                points.Add(new DrawablePoint(X, Y + y, '\u2551'));
 
                 // Right border line
-                points.Add(new Point(X + _w + 1, y) { Symbol = '\u2551' });
+                points.Add(new DrawablePoint(X + _w + 1, y, '\u2551'));
             }
 
             // Bottom border line
-            points.Add(new Point(X, Y + _h + 1) { Symbol = '\u255A' });
+            points.Add(new DrawablePoint(X, Y + _h + 1, '\u255A'));
             for(int x = 0; x < _w; x++)
-                points.Add(new Point(X + x + 1, Y + _h + 1) { Symbol = '\u2550' });
-            points.Add(new Point(X + _w + 1, Y + _h + 1) { Symbol = '\u255D' });
+                points.Add(new DrawablePoint(X + x + 1, Y + _h + 1, '\u2550'));
+            points.Add(new DrawablePoint(X + _w + 1, Y + _h + 1, '\u255D' ));
 
             // Generate single mutation for blocks and playfield borders
             var mutation = new GridMutation();
-            foreach (Block b in _blocks)
-                mutation.TargetPosition.Add((b.Point, b.Point.X, b.Point.Y));
+            foreach (DrawablePoint p in _blocks)
+                mutation.AddTarget(p);
 
             // Add playfield border points
-            foreach (Point p in points)
-                mutation.TargetPosition.Add((p, p.X, p.Y));
+            foreach (DrawablePoint p in points)
+                mutation.AddTarget(p);
 
             Renderer.Mutations.Add(mutation);
         }

@@ -86,7 +86,7 @@ namespace Tetrix.Tetroes
         {
             _mutationState = new GridMutation();
             foreach(Block b in Blocks)
-                _mutationState.SourcePosition.Add((b.Point, b.X, b.Y));
+                _mutationState.AddSource(b.X, b.Y);
         }
 
         // Registers the current location of the tetro blocks and returns 
@@ -94,7 +94,7 @@ namespace Tetrix.Tetroes
         public GridMutation EndMupation()
         {
             foreach(Block b in Blocks)
-                _mutationState.TargetPosition.Add((b.Point, b.X, b.Y));
+                _mutationState.AddTarget(b);
 
             return _mutationState;
         }
@@ -112,7 +112,6 @@ namespace Tetrix.Tetroes
                 case TetroTypes.Z: return new Z(playfield.X + 4, playfield.Y + 1, playfield);
                 case TetroTypes.J: return new J(playfield.X + 4, playfield.Y + 1, playfield);
                 case TetroTypes.L: return new L(playfield.X + 4, playfield.Y + 1, playfield);
-                // this is what I tested with :)
                 default: throw new ArgumentOutOfRangeException("type");
             }
         }

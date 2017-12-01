@@ -6,9 +6,7 @@ namespace Tetrix.UI
         {
             var m = new GridMutation();
             for (int i = 0; i < text.Length; i++)
-                m.TargetPosition.Add((
-                    new Point(x + i, y) { Symbol = text[i] }, x + i, y
-                ));
+                m.AddTarget(new DrawablePoint(x + i, y, text[i]));
 
             return m;
         }
@@ -19,9 +17,7 @@ namespace Tetrix.UI
             {
                 string text = lines[_y];
                 for (int _x = 0; _x < text.Length; _x++)
-                    m.TargetPosition.Add((
-                        new Point(x + _x, y + _y) { Symbol = text[_x] }, x + _x, y + _y
-                    ));
+                    m.AddTarget(new DrawablePoint(x + _x, y + _y, text[_x]));
             }
 
             return m;

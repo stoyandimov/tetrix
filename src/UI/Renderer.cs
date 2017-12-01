@@ -63,20 +63,20 @@ namespace Tetrix.UI
                 GridMutation m = Mutations.Take();
                 var Start = DateTime.Now;
                 // Remove all blocks mutations that won't affect the GUI
-                m.RemoveRedundentBlockMutations();
+                // m.RemoveRedundentBlockMutations();
                 // Clears blocks after move
-                foreach ((Point p, int x, int y) in m.SourcePosition)
+                foreach (var p in m.SourcePosition)
                 {
-                    Console.SetCursorPosition(x, y);
+                    Console.SetCursorPosition(p.X, p.Y);
                     Console.Write(' ');
                     DeletionsCounter++;
                 }
                 // Renders the block on the new position
-                foreach ((Point p, int x, int y) in m.TargetPosition)
+                foreach (var p in m.TargetPosition)
                 {
                     if (Console.ForegroundColor != (ConsoleColor) p.ForeColor)
                         Console.ForegroundColor = (ConsoleColor) p.ForeColor;
-                    Console.SetCursorPosition(x, y);
+                    Console.SetCursorPosition(p.X, p.Y);
                     Console.Write(p.Symbol);
                     AdditionsCounter++;
                 }

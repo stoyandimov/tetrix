@@ -33,16 +33,16 @@ namespace Tetrix
                         {
                             currentOption = MenuOptions.StartGame;
                             var m = new GridMutation();
-                            m.SourcePosition.Add((new Point(2, 4), 2, 4));
-                            m.TargetPosition.Add((new Point(2, 3) { Symbol = '-' }, 2, 3));
+                            m.AddSource(new Point(2, 4));
+                            m.AddTarget(new DrawablePoint(2, 3, '-' ));
                             _renderer.Mutations.Add(m);
                         }
                         else
                         {
                             currentOption = MenuOptions.Exit;
                             var m = new GridMutation();
-                            m.SourcePosition.Add((new Point(2, 3), 2, 3));
-                            m.TargetPosition.Add((new Point(2, 4) { Symbol = '-' }, 2, 4));
+                            m.AddSource(new Point(2, 3));
+                            m.AddTarget(new DrawablePoint(2, 4, '-' ));
                             _renderer.Mutations.Add(m);
                         }
                         break;

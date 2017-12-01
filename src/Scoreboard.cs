@@ -32,27 +32,25 @@ namespace Tetrix
 
         public void RenderScore()
         {
-            var mutation = TextHelper.Write(15, 7, $"score: {_score}");
+            var mutation = TextHelper.Write(15, 8, $"score: {_score}");
             _renderer.Mutations.Add(mutation);
         }
 
         private GridMutation RenderNextTetro(Tetro tetro)
         {
-            var m = TextHelper.Write(15, 3, "next:");
+            var m = TextHelper.Write(15, 2, "next:");
             foreach(Block b in tetro.Blocks)
-                m.TargetPosition.Add((
-                        new Point(b.X + 17, b.Y + 3) { Symbol = b.Symbol, ForeColor = b.Point.ForeColor }, b.X + 17, b.Y + 2
-                    ));
+                m.AddTarget(new DrawablePoint(b.X + 11, b.Y + 3, b.ForeColor, b.Symbol, b.Debug));
+
             return m;
         }
 
         private GridMutation ClearTetro(Tetro tetro)
         {
             var m = new GridMutation();
-            foreach(Block b in tetro.Blocks)
-                m.SourcePosition.Add((
-                        new Point(b.X + 17, b.Y + 3) { Symbol = b.Symbol }, b.X + 17, b.Y + 2
-                    ));
+            foreach(DrawablePoint b in tetro.Blocks)
+                m.AddSource(b.X + 11, b.Y + 3);
+
             return m;
         }
     }
