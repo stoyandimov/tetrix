@@ -32,7 +32,7 @@ namespace Tetrix
 
         public void RenderScore()
         {
-            var mutation = TextHelper.Write(15, 8, $"score: {_score}");
+            var mutation = TextHelper.Write(15, 9, $"score: {_score}");
             _renderer.Mutations.Add(mutation);
         }
 
@@ -40,7 +40,7 @@ namespace Tetrix
         {
             var m = TextHelper.Write(15, 2, "next:");
             foreach(Block b in tetro.Blocks)
-                m.AddTarget(new DrawablePoint(b.X + 11, b.Y + 3, b.ForeColor, b.Symbol, b.Debug));
+                m.AddTarget(new DrawablePoint(b.X + 11, b.Y + 4, b.ForeColor, b.Symbol, b.Debug));
 
             return m;
         }
@@ -49,7 +49,7 @@ namespace Tetrix
         {
             var m = new GridMutation();
             foreach(DrawablePoint b in tetro.Blocks)
-                m.AddSource(b.X + 11, b.Y + 3);
+                m.AddSource(b.X + 11, b.Y + 4);
 
             return m;
         }

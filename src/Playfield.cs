@@ -14,9 +14,9 @@ namespace Tetrix
         // Width of the playfield
         int _w = 10;
 
-        public int X;
+        public int X { get; set; }
 
-        public int Y;
+        public int Y { get; set; }
 
         Game _game;
 
@@ -172,7 +172,7 @@ namespace Tetrix
         {
             // Check for full rows
             var rowsToRemove= new List<int>();
-            for (int y = 1; y <= _h; y++)
+            for (int y = Y; y <= _h + Y; y++)
             {
                 var row = _blocks.Where(b => b.Y == y);
                 int count = row.Count();
@@ -245,19 +245,28 @@ namespace Tetrix
             _game.Scoreboard.RenderScore();
             _game.Scoreboard.UpdateNextTetro(_game.NextTetro);
 
-            var points = new List<DrawablePoint>();
+            var points = new List<DrawablePoint>
+            {
+                // Top border line
+                new DrawablePoint(X, Y, '\u2554'),
+                new DrawablePoint(X + 1, Y, '\u2550'),
+                new DrawablePoint(X + 2, Y, '\u2550'),
+                new DrawablePoint(X + 3, Y, '\u255D'),
+                new DrawablePoint(X + 4, Y, ' '),
+                new DrawablePoint(X + 5, Y, ' '),
+                new DrawablePoint(X + 6, Y, ' '),
+                new DrawablePoint(X + 7, Y, ' '),
+                new DrawablePoint(X + 8, Y, '\u255A'),
+                new DrawablePoint(X + 9, Y, '\u2550'),
+                new DrawablePoint(X + 10, Y, '\u2550'),
+                new DrawablePoint(X + 11, Y, '\u2557')
+            };
 
-            // Top border line
-            points.Add(new DrawablePoint(X, Y, '\u2554' ));
-            for(int x = 1; x <= _w; x++)
-                points.Add(new DrawablePoint(X + x, Y, '\u2550'));
-            points.Add(new DrawablePoint(X + _w + 1, Y, '\u2557' ));
-            
             // For each row
-            for(int y = 1; y <= _h; y++)
+            for (int y = Y + 1; y <= _h + Y; y++)
             {
                 // Left border line
-                points.Add(new DrawablePoint(X, Y + y, '\u2551'));
+                points.Add(new DrawablePoint(X, y, '\u2551'));
 
                 // Right border line
                 points.Add(new DrawablePoint(X + _w + 1, y, '\u2551'));
@@ -265,9 +274,10 @@ namespace Tetrix
 
             // Bottom border line
             points.Add(new DrawablePoint(X, Y + _h + 1, '\u255A'));
-            for(int x = 0; x < _w; x++)
-                points.Add(new DrawablePoint(X + x + 1, Y + _h + 1, '\u2550'));
-            points.Add(new DrawablePoint(X + _w + 1, Y + _h + 1, '\u255D' ));
+            for(int x = X + 1; x <= _w + X + 1; x++)
+                points.Add(new DrawablePoint(x, Y + _h + 1, '\u2550'));
+            points.Add(new DrawablePoint(X + _w + 1, Y + _h + 1, '\u255D'));
+
 
             // Generate single mutation for blocks and playfield borders
             var mutation = new GridMutation();
