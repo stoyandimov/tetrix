@@ -27,9 +27,9 @@ namespace Tetrix
         // List of all block from all tetrominoes
         IList<Block> _blocks = new List<Block>();
 
-        public event EventHandler RowRemoved;
+        public event EventHandler<RowRemovedEventArgs> RowRemoved;
 
-        protected void OnRowRemoved(EventArgs e)
+        protected void OnRowRemoved(RowRemovedEventArgs e)
             => RowRemoved?.Invoke(this, e);
 
         public event EventHandler GameOver;
@@ -207,8 +207,8 @@ namespace Tetrix
                 }
                 Renderer.Mutations.Add(removeMutation);
                 Renderer.Mutations.Add(shiftDownMutation);
-                OnRowRemoved(EventArgs.Empty);
             }
+            OnRowRemoved(RowRemovedEventArgs.Create(rowsToRemove.Count));
         }
 
         // Check if a single block location (x, y) is available/empty 

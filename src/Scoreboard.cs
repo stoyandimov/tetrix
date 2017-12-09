@@ -15,9 +15,9 @@ namespace Tetrix
             _renderer = renderer;
         }
 
-        public void IncrementScore()
+        public void IncrementScore(int count)
         {
-            _score++;
+            _score += count;
             RenderScore();
         }
 

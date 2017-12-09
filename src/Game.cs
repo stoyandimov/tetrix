@@ -101,9 +101,12 @@ namespace Tetrix
             Console.SetCursorPosition(0, 27);
         }
 
-        protected void RowRemovedHandler(object sender, EventArgs e)
+        protected void RowRemovedHandler(object sender, RowRemovedEventArgs e)
         {
-            Scoreboard.IncrementScore();
+            var score = e.RowCount;
+            if (score == 4)
+                score = 8;
+            Scoreboard.IncrementScore(score);
         }
 
         // Pauses the movement of tetroes
