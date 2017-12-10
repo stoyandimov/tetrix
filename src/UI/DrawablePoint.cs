@@ -11,12 +11,10 @@
             : base(x, y)
             => Symbol = symbol;
 
-        public DrawablePoint(int x, int y, int color, char symbol, char debug)
-            : base(x, y)
+        public DrawablePoint(int x, int y, int color, char symbol, char debug = ' ')
+            : this(x, y, symbol)
         {
-            Symbol = '#';
             ForeColor = color;
-            Symbol = symbol;
             Debug = debug;
         }
     }

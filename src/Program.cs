@@ -20,12 +20,14 @@ namespace Tetrix
         private static void PrepareConsole()
         {
             Console.OutputEncoding = Encoding.UTF8;
+            Console.CursorVisible = false;
             Console.CancelKeyPress += (s, e) => ResetConsole();
         }
 
         private static void ResetConsole()
         {
             Console.Clear();
+            Console.CursorVisible = true;
             Console.ResetColor();
         }
     }
