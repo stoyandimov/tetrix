@@ -5,7 +5,7 @@ namespace Tetrix.Tetroes
         public J(int x, int y, Playfield playfield)
             : base(x, y, playfield)
         {
-            Color = 9;
+            Color = 3;
             Type = TetroTypes.J;
             CreateBlocks();
         }
