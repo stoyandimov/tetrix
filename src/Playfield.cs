@@ -3,6 +3,7 @@ using System.Linq;
 using System.Collections.Generic;
 using Tetrix.Tetroes;
 using Tetrix.UI;
+using System.Threading;
 
 namespace Tetrix
 {
@@ -18,9 +19,9 @@ namespace Tetrix
 
         public int Y { get; set; }
 
-        Game _game;
+        private readonly TetrisStage _stage;
 
-        public Renderer Renderer { get; private set; }
+        private readonly Renderer _renderer;
 
         Tetro _curTetro;
 
@@ -32,23 +33,21 @@ namespace Tetrix
         protected void OnRowRemoved(RowRemovedEventArgs e)
             => RowRemoved?.Invoke(this, e);
 
-        public event EventHandler GameOver;
-
-        protected void OnGameOver(EventArgs e)
-             => GameOver?.Invoke(this, e);
-
         // Constructor
-        public Playfield(int x, int y, Renderer renderer, Game game)
+        public Playfield(int x, int y, Renderer renderer, TetrisStage stage)
         {
             X = x;
             Y = y;
-            Renderer = renderer;
-            _game = game;
+            _renderer = renderer;
+            _stage = stage;
         }
 
         // Progresses the game - 1 move.
         public void Progress(object state)
         {
+            if (!keepRuuning)
+                return; 
+
             if (_curTetro == null)
                 ResetCurrentTetro(); 
 
@@ -58,12 +57,12 @@ namespace Tetrix
                 RemoveFullRowsIfAny();
                 // Reset the current tetromino
                 ResetCurrentTetro();
-
                 // If the new tetro cannot move done - game over
                 if (!_curTetro.CanMoveDown())
                 {
-                    OnGameOver(EventArgs.Empty);
-                    GameOver = null;
+                    keepRuuning = false;
+                    _renderer.Render(TextHelper.Write(17, 13, "Game Over"));
+                    _renderer.Render(TextHelper.Write(17, 15, "[press a key to go to menu]"));
                 }
 
                 return;
@@ -76,53 +75,33 @@ namespace Tetrix
         {
             _curTetro.BeginMutation();
             _curTetro.Rotate();
-            Renderer.Mutations.Add(_curTetro.EndMupation());
+            _renderer.Render(_curTetro.EndMupation());
         }
 
-        internal void Start()
+        bool keepRuuning = true;
+
+        public void Start(int speed)
         {
-            Renderer.Debug = _game.Settings.Debug;
-            this.Render();
-
-            bool run = true;
-            while(run)
+            Render();
+            using (new Timer(Progress, null, 0, 1100 - (speed * 100)))
             {
-                ConsoleKeyInfo input = Console.ReadKey(true);
-
-                // Exits at game over when pressing 'Enter'
-                if (_game.IsGameOver && input.Key != ConsoleKey.Enter)
-                    continue;
-
-                switch(input.Key)
+                while(keepRuuning)
                 {
-                    case ConsoleKey.Q:
-                    case ConsoleKey.X:
-                        run = false;
-                        GameOver?.Invoke(this, EventArgs.Empty);
-                        break;
-                    case ConsoleKey.UpArrow:
-                        this.Rotate();
-                        break;
-                    case ConsoleKey.LeftArrow:
-                        this.MoveLeft();
-                        break;
-                    case ConsoleKey.RightArrow:
-                        this.MoveRight();
-                        break;
-                    case ConsoleKey.DownArrow:
-                        this.MoveDown();
-                        break;
-                    case ConsoleKey.F5:
-                        this.Render();
-                        break;
-                    case ConsoleKey.D:
-                        Renderer.Debug = !Renderer.Debug;
-                        this.Render();
-                        break;
-                    case ConsoleKey.Enter:
-                        if (_game.IsGameOver)
-                            run = false;
-                        break;
+                    ConsoleKeyInfo input = Console.ReadKey(true);
+                    switch(input.Key)
+                    {
+                        case ConsoleKey.Q:
+                        case ConsoleKey.X:keepRuuning = false; break;
+                        case ConsoleKey.UpArrow: Rotate(); break;
+                        case ConsoleKey.LeftArrow: MoveLeft(); break;
+                        case ConsoleKey.RightArrow: MoveRight(); break;
+                        case ConsoleKey.DownArrow: MoveDown(); break;
+                        case ConsoleKey.F5: Render(); break;
+                        case ConsoleKey.Enter:
+                            if (!keepRuuning)
+                                return;
+                            break;
+                    }
                 }
             }
         }
@@ -134,7 +113,7 @@ namespace Tetrix
 
             _curTetro.BeginMutation();
             _curTetro.MoveLeft();
-            Renderer.Mutations.Add(_curTetro.EndMupation());
+            _renderer.Render(_curTetro.EndMupation());
         }
 
         public void MoveRight()
@@ -144,7 +123,7 @@ namespace Tetrix
 
             _curTetro.BeginMutation();
             _curTetro.MoveRight();
-            Renderer.Mutations.Add(_curTetro.EndMupation());
+            _renderer.Render(_curTetro.EndMupation());
         }
 
         public void MoveDown()
@@ -154,13 +133,13 @@ namespace Tetrix
 
             _curTetro.BeginMutation();
             _curTetro.MoveDown();
-            Renderer.Mutations.Add(_curTetro.EndMupation());
+            _renderer.Render(_curTetro.EndMupation());
         }
 
         // Set current tetromino and generate the next one
         protected void ResetCurrentTetro()
         {
-            _curTetro = _game.GetNextTetro();
+            _curTetro = _stage.GetNextTetro();
 
             // Add all blocks from all tetrominoes to single List
             // for faster rendering and colision detection
@@ -190,23 +169,21 @@ namespace Tetrix
                     blocksToRemove.Add(b);
 
                 // Remove blocks
-                var removeMutation = new GridMutation();
                 foreach(Block b in blocksToRemove)
                 {
                     _blocks.Remove(b);
-                    removeMutation.AddSource(b);
+                    mutation.AddSource(b);
                 }
 
                 // Shift upper blocks down
-                var shiftDownMutation = new GridMutation();
                 foreach(Block b in _blocks.Where(_b => _b.Y < row))
                 {
-                    shiftDownMutation.AddSource(new Point(b.X, b.Y));
+                    mutation.AddSource(new Point(b.X, b.Y));
                     ++b.Y;
-                    shiftDownMutation.AddTarget(b);
+                    mutation.AddTarget(b);
                 }
-                Renderer.Mutations.Add(removeMutation);
-                Renderer.Mutations.Add(shiftDownMutation);
+
+                _renderer.Render(mutation);
             }
             OnRowRemoved(RowRemovedEventArgs.Create(rowsToRemove.Count));
         }
@@ -240,11 +217,6 @@ namespace Tetrix
         // Renders the entire screen
         public void Render()
         {
-            Renderer.Clear();
-
-            _game.Scoreboard.RenderScore();
-            _game.Scoreboard.UpdateNextTetro(_game.NextTetro);
-
             var points = new List<DrawablePoint>
             {
                 // Top border line
@@ -288,7 +260,7 @@ namespace Tetrix
             foreach (DrawablePoint p in points)
                 mutation.AddTarget(p);
 
-            Renderer.Mutations.Add(mutation);
+            _renderer.Render(mutation);
         }
 
     }

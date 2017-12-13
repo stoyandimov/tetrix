@@ -5,40 +5,51 @@ namespace Tetrix.UI
 {
     public class GridMutation
     {
-        public IList<Point> SourcePosition { get; private set; } = new List<Point>();
-        public IList<DrawablePoint> TargetPosition { get; private set; } = new List<DrawablePoint>();
+        public List<Point> SourcePositions { get; private set; } = new List<Point>();
+        public List<DrawablePoint> TargetPositions { get; private set; } = new List<DrawablePoint>();
 
         public void AddSource(int x, int y)
             => AddSource(new Point(x, y));
 
         public void AddSource(Point p)
-            => SourcePosition.Add(p);
+            => SourcePositions.Add(p);
+
+        public void AddSources(IEnumerable<Point> points)
+            => SourcePositions.AddRange(points);
 
         public void AddTarget(DrawablePoint p)
-            => TargetPosition.Add(p);
+            => TargetPositions.Add(p);
 
-        // Remove all blocks mutations that won't affect the GUI
-        /*
-        public void RemoveRedundentBlockMutations()
+        public void AddTargets(IEnumerable<DrawablePoint> points)
+            => TargetPositions.AddRange(points);
+
+
+        public static GridMutation Create(int x, int y, DrawablePoint target)
         {
-            // Make a collection of blocks that won't move in this mutation
-            var redundentBlockMutations = new List<Point>();
-            foreach(Point targetPos in TargetPosition)
-                redundentBlockMutations.AddRange(SourcePosition.Where(
-                    s => s== targetPos
-                    && s.X == targetPos.X
-                    && s.Y == targetPos.Y)
-                );
+            var m = new GridMutation();
+            m.AddSource(x, y);
+            m.AddTarget(target);
 
-            // Removes blocks that won't move in this mutation
-            SourcePosition.RemoveAll(s => redundentBlockMutations.Contains(s));
-            TargetPosition.RemoveAll(t => redundentBlockMutations.Contains(t));
-            
-            // Removes source position blocks to which a target block will be written.
-            // This will prevent redundent search and remove blocks
-            SourcePosition.RemoveAll(
-                s => TargetPosition.Any(t => t.X == s.X && t.Y == s.Y));
+            return m;
         }
-        */
+
+        public static GridMutation Create(Point source, DrawablePoint target)
+        {
+            var m = new GridMutation();
+            m.AddSource(source);
+            m.AddTarget(target);
+
+            return m;
+        }
+
+        public static GridMutation Create(IEnumerable<Point> sources, IEnumerable<DrawablePoint> targets)
+        {
+            var m = new GridMutation();
+            m.AddSources(sources);
+            m.AddTargets(targets);
+
+            return m;
+        }
+
     }
 }

@@ -1,4 +1,3 @@
-using System;
 using Tetrix.Tetroes;
 using Tetrix.UI;
 
@@ -11,9 +10,7 @@ namespace Tetrix
         int _score;
 
         public Scoreboard(Renderer renderer)
-        {
-            _renderer = renderer;
-        }
+            => _renderer = renderer;
 
         public void IncrementScore(int count)
         {
@@ -24,17 +21,14 @@ namespace Tetrix
         public void UpdateNextTetro(Tetro next)
         {
             if (_nextTetro != null)
-                _renderer.Mutations.Add(ClearTetro(_nextTetro));
+                _renderer.Render(ClearTetro(_nextTetro));
 
             _nextTetro = next;
-            _renderer.Mutations.Add(RenderNextTetro(_nextTetro));
+            _renderer.Render(RenderNextTetro(_nextTetro));
         }
 
         public void RenderScore()
-        {
-            var mutation = TextHelper.Write(15, 9, $"score: {_score}");
-            _renderer.Mutations.Add(mutation);
-        }
+            => _renderer.Render(TextHelper.Write(15, 9, $"score: {_score}"));
 
         private GridMutation RenderNextTetro(Tetro tetro)
         {

@@ -11,7 +11,7 @@ namespace Tetrix
 
             var settings = new GameSettings(args);
             var game = new Game(settings);
-            game.Start();
+            game.Bootstrap(); // blocks
             game.Shutdown();
 
             ResetConsole();
