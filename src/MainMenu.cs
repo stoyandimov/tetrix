@@ -1,5 +1,6 @@
 using System;
 using Tetrix.UI;
+using Tetrix.UI.Text;
 
 namespace Tetrix
 {
@@ -14,9 +15,9 @@ namespace Tetrix
         public MenuOptions WhatsNext()
         {
             _renderer.Clear();
-            _renderer.Write(1, 1, "Welcome to TETRIX - the console ASCII tetris");
-            _renderer.Write(1, 3, " - Start game");
-            _renderer.Write(1, 4, "   Exit");
+            _renderer.WriteFiglet(1, 0, "TetriS");
+            _renderer.WriteText(1, 7, " - Start game");
+            _renderer.WriteText(1, 8, "   Exit");
 
             MenuOptions currentOption = MenuOptions.StartGame;
 
@@ -32,13 +33,13 @@ namespace Tetrix
                         {
                             currentOption = MenuOptions.StartGame;
                             _renderer.Render(
-                                GridMutation.Create(2, 4, new DrawablePoint(2, 3, '-')));
+                                GridMutation.Create(2, 8, new DrawablePoint(2, 7, '-')));
                         }
                         else
                         {
                             currentOption = MenuOptions.Exit;
                             _renderer.Render(
-                                GridMutation.Create(2, 3, new DrawablePoint(2, 4, '-')));
+                                GridMutation.Create(2, 7, new DrawablePoint(2, 8, '-')));
                         }
                         break;
                     case ConsoleKey.Enter:

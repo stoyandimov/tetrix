@@ -1,5 +1,6 @@
 using Tetrix.Tetroes;
 using Tetrix.UI;
+using Tetrix.UI.Text;
 
 namespace Tetrix
 {
@@ -28,11 +29,11 @@ namespace Tetrix
         }
 
         public void RenderScore()
-            => _renderer.Render(TextHelper.Write(15, 9, $"score: {_score}"));
+            => _renderer.WriteText(15, 9, $"score: {_score}");
 
         private GridMutation RenderNextTetro(Tetro tetro)
         {
-            var m = TextHelper.Write(15, 2, "next:");
+            var m = (new TextWriter()).WriteText(15, 2, "next:");
             foreach(Block b in tetro.Blocks)
                 m.AddTarget(new DrawablePoint(b.X + 11, b.Y + 4, b.ForeColor, b.Symbol, b.Debug));
 

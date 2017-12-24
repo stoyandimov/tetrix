@@ -66,6 +66,7 @@ namespace Tetrix
             _playfield.RowRemoved += RowRemovedHandler;
             _scoreboard.RenderScore();
             _playfield.Start(_settings.Speed);
+            Thread.Sleep(300);
         }
     }
 }

@@ -23,11 +23,10 @@ namespace Tetrix.UI
         public void AddTargets(IEnumerable<DrawablePoint> points)
             => TargetPositions.AddRange(points);
 
-
-        public static GridMutation Create(int x, int y, DrawablePoint target)
+        public static GridMutation Create(int sourceX, int sourceY, DrawablePoint target)
         {
             var m = new GridMutation();
-            m.AddSource(x, y);
+            m.AddSource(sourceX, sourceY);
             m.AddTarget(target);
 
             return m;
@@ -38,6 +37,15 @@ namespace Tetrix.UI
             var m = new GridMutation();
             m.AddSource(source);
             m.AddTarget(target);
+
+            return m;
+        }
+
+        public static GridMutation Create(IEnumerable<DrawablePoint> target)
+        {
+            var m = new GridMutation();
+            m.AddSources(target);
+            m.AddTargets(target);
 
             return m;
         }

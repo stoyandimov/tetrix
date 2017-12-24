@@ -7,9 +7,7 @@ namespace Tetrix.UI
 {
     public class Renderer
     {
-
         readonly CancellationTokenSource _cts;
-
         readonly BlockingCollection<GridMutation> _mutations = new BlockingCollection<GridMutation>();  
 
         public Renderer()
@@ -21,7 +19,7 @@ namespace Tetrix.UI
         public void BeginRendering()
         {
             Clear();
-            Task.Run(() => ProcessUpdates(_cts.Token));
+            Task.Run(() => ProcessUpdates(_cts.Token), _cts.Token);
         }
 
         public void Clear()
@@ -62,8 +60,5 @@ namespace Tetrix.UI
                     break;
             }
         }
-
-        public void Write(int x, int y, string text)
-            => _mutations.Add(TextHelper.Write(x, y, text));
     }
 }

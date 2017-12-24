@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using Tetrix.Tetroes;
 using Tetrix.UI;
 using System.Threading;
+using Tetrix.UI.Text;
 
 namespace Tetrix
 {
@@ -61,8 +62,8 @@ namespace Tetrix
                 if (!_curTetro.CanMoveDown())
                 {
                     keepRuuning = false;
-                    _renderer.Render(TextHelper.Write(17, 13, "Game Over"));
-                    _renderer.Render(TextHelper.Write(17, 15, "[press a key to go to menu]"));
+                    _renderer.WriteText(17, 13, "Game Over");
+                    _renderer.WriteText(17, 15, "[press a key to go to menu]");
                 }
 
                 return;
@@ -183,8 +184,9 @@ namespace Tetrix
                     mutation.AddTarget(b);
                 }
 
-                _renderer.Render(mutation);
             }
+            _renderer.Render(mutation);
+
             OnRowRemoved(RowRemovedEventArgs.Create(rowsToRemove.Count));
         }
 
