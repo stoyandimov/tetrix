@@ -5,6 +5,8 @@ using Tetrix.Tetroes;
 using Tetrix.UI;
 using System.Threading;
 using Tetrix.UI.Text;
+using tetrix.Storage;
+using System.Threading.Tasks;
 
 namespace Tetrix
 {
@@ -47,10 +49,10 @@ namespace Tetrix
         public void Progress(object state)
         {
             if (!keepRuuning)
-                return; 
+                return;
 
             if (_curTetro == null)
-                ResetCurrentTetro(); 
+                ResetCurrentTetro();
 
             if (!_curTetro.CanMoveDown())
             {
@@ -84,20 +86,48 @@ namespace Tetrix
         public void Start(int speed)
         {
             Render();
-            using (new Timer(Progress, null, 0, 1100 - (speed * 100)))
+            using (var timer = new Timer(Progress, null, 0, 1100 - (speed * 100)))
             {
-                while(keepRuuning)
+                while (keepRuuning)
                 {
                     ConsoleKeyInfo input = Console.ReadKey(true);
-                    switch(input.Key)
+                    switch (input.Key)
                     {
                         case ConsoleKey.Q:
-                        case ConsoleKey.X:keepRuuning = false; break;
+                        case ConsoleKey.X: keepRuuning = false; break;
                         case ConsoleKey.UpArrow: Rotate(); break;
                         case ConsoleKey.LeftArrow: MoveLeft(); break;
                         case ConsoleKey.RightArrow: MoveRight(); break;
                         case ConsoleKey.DownArrow: MoveDown(); break;
                         case ConsoleKey.F5: Render(); break;
+                        case ConsoleKey.Escape:
+                            timer.Change(0, Timeout.Infinite);
+                            var next = (new InGameMenu(_renderer)).WhatsNext();
+                            switch (next)
+                            {
+                                case MenuOptions.SaveGame:
+                                    (new JsonRepository()).Save(new SavableData()
+                                    {
+                                        Blocks = GetBlocks(),
+                                        Score = _stage.Scoreboard.GetScore(),
+                                    });
+                                    // Show game saved message for 2 seconds and quit
+                                    _renderer.WriteText(17, 15, "Game saved!");
+                                    Thread.Sleep(2000);
+                                    _renderer.WriteText(17, 15, "           ");
+                                    keepRuuning = false;
+                                    break;
+                                case MenuOptions.ResumeGame:
+                                    _renderer.Clear();
+                                    Render();
+                                    timer.Change(100, 1100 - (speed * 100));
+                                    break;
+                                case MenuOptions.QuitGame:
+                                    keepRuuning = false;
+                                    break;
+                                default: break;
+                            }
+                            break;
                         case ConsoleKey.Enter:
                             if (!keepRuuning)
                                 return;
@@ -151,7 +181,7 @@ namespace Tetrix
         public void RemoveFullRowsIfAny()
         {
             // Check for full rows
-            var rowsToRemove= new List<int>();
+            var rowsToRemove = new List<int>();
             for (int y = Y; y <= _h + Y; y++)
             {
                 var row = _blocks.Where(b => b.Y == y);
@@ -166,18 +196,18 @@ namespace Tetrix
             {
                 // Select blocks to remove
                 var blocksToRemove = new List<Block>();
-                foreach(Block b in _blocks.Where(b => b.Y == row))
+                foreach (Block b in _blocks.Where(b => b.Y == row))
                     blocksToRemove.Add(b);
 
                 // Remove blocks
-                foreach(Block b in blocksToRemove)
+                foreach (Block b in blocksToRemove)
                 {
                     _blocks.Remove(b);
                     mutation.AddSource(b);
                 }
 
                 // Shift upper blocks down
-                foreach(Block b in _blocks.Where(_b => _b.Y < row))
+                foreach (Block b in _blocks.Where(_b => _b.Y < row))
                 {
                     mutation.AddSource(new Point(b.X, b.Y));
                     ++b.Y;
@@ -192,7 +222,7 @@ namespace Tetrix
 
         // Check if a single block location (x, y) is available/empty 
         public bool IsLocationAvailable(int x, int y)
-        {   
+        {
             // check out of boundries
             if (x >= _w + X + 1 || x < X + 1 || y >= _h + Y + 1 /* || y < 1 */)
                 return false;
@@ -200,8 +230,8 @@ namespace Tetrix
             // check block colisions
             foreach (Block b in _blocks)
                 if (!_curTetro.Blocks.Any(_b => _b == b))
-                   if (b.X == x && b.Y == y)
-                    return false;
+                    if (b.X == x && b.Y == y)
+                        return false;
 
             return true;
         }
@@ -248,7 +278,7 @@ namespace Tetrix
 
             // Bottom border line
             points.Add(new DrawablePoint(X, Y + _h + 1, '\u255A'));
-            for(int x = X + 1; x <= _w + X + 1; x++)
+            for (int x = X + 1; x <= _w + X + 1; x++)
                 points.Add(new DrawablePoint(x, Y + _h + 1, '\u2550'));
             points.Add(new DrawablePoint(X + _w + 1, Y + _h + 1, '\u255D'));
 
@@ -265,5 +295,10 @@ namespace Tetrix
             _renderer.Render(mutation);
         }
 
+        public IEnumerable<Block> GetBlocks()
+            => _blocks.Where(b => !_curTetro.Blocks.Contains(b));
+
+        public void SetBlocks(IEnumerable<Block> blocks)
+            => _blocks = blocks.ToList();
     }
 }

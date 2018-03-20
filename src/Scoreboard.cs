@@ -13,6 +13,9 @@ namespace Tetrix
         public Scoreboard(Renderer renderer)
             => _renderer = renderer;
 
+        public int GetScore()
+            => _score;
+
         public void IncrementScore(int count)
         {
             _score += count;

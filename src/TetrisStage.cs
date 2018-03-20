@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Threading;
+using tetrix.Storage;
 using Tetrix.Tetroes;
 using Tetrix.UI;
 
@@ -8,7 +9,7 @@ namespace Tetrix
     public class TetrisStage
     {
         private readonly Playfield _playfield;
-        private readonly Scoreboard _scoreboard;
+        public readonly Scoreboard Scoreboard;
         private readonly Random _randomizer;
         private readonly Renderer _renderer;
         private readonly GameSettings _settings;
@@ -20,13 +21,13 @@ namespace Tetrix
             _settings = settings;
             _randomizer = new Random();
             _playfield = new Playfield(0, 0, renderer, this);
-            _scoreboard = new Scoreboard(renderer);
+            Scoreboard = new Scoreboard(renderer);
         }
 
         public void Render()
         {
-            _scoreboard.RenderScore();
-            _scoreboard.UpdateNextTetro(_nextTetro);
+            Scoreboard.RenderScore();
+            Scoreboard.UpdateNextTetro(_nextTetro);
             _playfield.Render();
         }
 
@@ -35,7 +36,7 @@ namespace Tetrix
             var score = e.RowCount;
             if (score == 4)
                 score = 8;
-            _scoreboard.IncrementScore(score);
+            Scoreboard.IncrementScore(score);
         }
 
         public Tetro GetNextTetro()
@@ -48,7 +49,7 @@ namespace Tetrix
             _nextTetro = GenerateRandomTetro();
 
             // Update Scoreboard
-            _scoreboard.UpdateNextTetro(_nextTetro);
+            Scoreboard.UpdateNextTetro(_nextTetro);
 
             return curTetro;
         }
@@ -64,7 +65,21 @@ namespace Tetrix
         {
             _renderer.Clear();
             _playfield.RowRemoved += RowRemovedHandler;
-            _scoreboard.RenderScore();
+            Scoreboard.RenderScore();
+            _playfield.Start(_settings.Speed);
+            Thread.Sleep(300);
+        }
+
+        public void Load(SavableData savableData)
+        {
+            _renderer.Clear();
+            _playfield.RowRemoved += RowRemovedHandler;
+            // Load score
+            Scoreboard.IncrementScore(savableData.Score);
+            Scoreboard.RenderScore();
+
+            // Load blocks
+            _playfield.SetBlocks(savableData.Blocks);
             _playfield.Start(_settings.Speed);
             Thread.Sleep(300);
         }

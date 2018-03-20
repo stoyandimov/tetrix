@@ -9,13 +9,13 @@ namespace Tetrix.Tetroes
         public int X { get; set; }
         public int Y { get; set; }
         public TetroTypes Type { get; protected set; }
-        
+
         // Use ConsoleColors
         public int Color { get; set; }
 
         // Container for the mutation state (used by BeginMutation(), EndMupation();)
         private GridMutation _mutationState;
-        
+
         protected Playfield _playfield;
 
         public Tetro(int x, int y, Playfield playfield)
@@ -26,7 +26,7 @@ namespace Tetrix.Tetroes
         }
 
         public abstract void Rotate();
-        
+
         public void MoveLeft()
         {
             foreach(Block b in Blocks)

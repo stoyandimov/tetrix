@@ -1,5 +1,6 @@
 using System;
 using System.Threading;
+using tetrix.Storage;
 using Tetrix.UI;
 
 namespace Tetrix
@@ -27,8 +28,14 @@ namespace Tetrix
                         case MenuOptions.Exit:
                             run = false;
                             break;
-                        case MenuOptions.StartGame:
+                        case MenuOptions.Load:
+                            var storage = new JsonRepository();
                             var stage = new TetrisStage(renderer, _settings);
+                            stage.Load(storage.Load());
+                            // game finished
+                            break;
+                        case MenuOptions.StartGame:
+                            stage = new TetrisStage(renderer, _settings);
                             stage.Start();
                             // game finished
                             break;
