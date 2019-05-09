@@ -105,13 +105,13 @@ namespace Tetrix.Tetroes
             //return new I(playfield.X + 4, playfield.Y + 1, playfield);
             switch(type)
             {
-                case TetroTypes.I: return new I(playfield.X + 4, playfield.Y + 0, playfield);
-                case TetroTypes.O: return new O(playfield.X + 5, playfield.Y + 0, playfield);
-                case TetroTypes.T: return new T(playfield.X + 4, playfield.Y + 0, playfield);
-                case TetroTypes.S: return new S(playfield.X + 4, playfield.Y + 0, playfield);
-                case TetroTypes.Z: return new Z(playfield.X + 4, playfield.Y + 0, playfield);
-                case TetroTypes.J: return new J(playfield.X + 4, playfield.Y + 0, playfield);
-                case TetroTypes.L: return new L(playfield.X + 4, playfield.Y + 0, playfield);
+                case TetroTypes.I: return new I(playfield.X - 1 + playfield.W / 2, playfield.Y + 0, playfield);
+                case TetroTypes.O: return new O(playfield.X - 0 + playfield.W / 2, playfield.Y + 0, playfield);
+                case TetroTypes.T: return new T(playfield.X - 1 + playfield.W / 2, playfield.Y + 0, playfield);
+                case TetroTypes.S: return new S(playfield.X - 1 + playfield.W / 2, playfield.Y + 0, playfield);
+                case TetroTypes.Z: return new Z(playfield.X - 1 + playfield.W / 2, playfield.Y + 0, playfield);
+                case TetroTypes.J: return new J(playfield.X - 1 + playfield.W / 2, playfield.Y + 0, playfield);
+                case TetroTypes.L: return new L(playfield.X - 1 + playfield.W / 2, playfield.Y + 0, playfield);
                 default: throw new ArgumentOutOfRangeException("type");
             }
         }

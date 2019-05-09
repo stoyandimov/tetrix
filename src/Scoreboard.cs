@@ -9,9 +9,15 @@ namespace Tetrix
         Renderer _renderer;
         Tetro _nextTetro;
         int _score;
+        int _x;
+        int _y;
 
-        public Scoreboard(Renderer renderer)
-            => _renderer = renderer;
+        public Scoreboard(Renderer renderer, int x, int y)
+        {
+            _renderer = renderer;
+            _x = x;
+            _y = y;
+        }
 
         public void IncrementScore(int count)
         {
@@ -29,13 +35,13 @@ namespace Tetrix
         }
 
         public void RenderScore()
-            => _renderer.WriteText(15, 9, $"score: {_score}");
+            => _renderer.WriteText(_x, _y + 9, $"score: {_score}");
 
         private GridMutation RenderNextTetro(Tetro tetro)
         {
-            var m = (new TextWriter()).WriteText(15, 2, "next:");
+            var m = (new TextWriter()).WriteText(_x, _y + 2, "next:");
             foreach(Block b in tetro.Blocks)
-                m.AddTarget(new DrawablePoint(b.X + 11, b.Y + 4, b.ForeColor, b.Symbol, b.Debug));
+                m.AddTarget(new DrawablePoint(b.X + _x, b.Y + 4, b.ForeColor, b.Symbol, b.Debug));
 
             return m;
         }
@@ -44,7 +50,7 @@ namespace Tetrix
         {
             var m = new GridMutation();
             foreach(DrawablePoint b in tetro.Blocks)
-                m.AddSource(b.X + 11, b.Y + 4);
+                m.AddSource(b.X + _x, b.Y + 4);
 
             return m;
         }
