@@ -21,7 +21,7 @@ namespace Tetrix
             _settings = settings;
             _randomizer = new Random();
             _playfield = new Playfield(0, 0, renderer, this);
-            Scoreboard = new Scoreboard(renderer);
+            Scoreboard = new Scoreboard(renderer, 17, 2);
         }
 
         public void Render()

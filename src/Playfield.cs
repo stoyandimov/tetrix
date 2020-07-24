@@ -13,10 +13,10 @@ namespace Tetrix
     public class Playfield
     {
         // Height of the playfield
-        int _h = 22;
+        public int H { get; private set; } = 20;
 
         // Width of the playfield
-        int _w = 10;
+        public int W { get; private set; } = 10;
 
         public int X { get; set; }
 
@@ -181,12 +181,12 @@ namespace Tetrix
         public void RemoveFullRowsIfAny()
         {
             // Check for full rows
-            var rowsToRemove = new List<int>();
-            for (int y = Y; y <= _h + Y; y++)
+            var rowsToRemove= new List<int>();
+            for (int y = Y; y <= H + Y; y++)
             {
                 var row = _blocks.Where(b => b.Y == y);
                 int count = row.Count();
-                if (count == _w)
+                if (count == W)
                     rowsToRemove.Add(y);
             }
 
@@ -224,7 +224,7 @@ namespace Tetrix
         public bool IsLocationAvailable(int x, int y)
         {
             // check out of boundries
-            if (x >= _w + X + 1 || x < X + 1 || y >= _h + Y + 1 /* || y < 1 */)
+            if (x >= W + X + 1 || x < X + 1 || y >= H + Y + 1 /* || y < 1 */)
                 return false;
 
             // check block colisions
@@ -253,34 +253,38 @@ namespace Tetrix
             {
                 // Top border line
                 new DrawablePoint(X, Y, '\u2554'),
-                new DrawablePoint(X + 1, Y, '\u2550'),
-                new DrawablePoint(X + 2, Y, '\u2550'),
-                new DrawablePoint(X + 3, Y, '\u255D'),
-                new DrawablePoint(X + 4, Y, ' '),
-                new DrawablePoint(X + 5, Y, ' '),
-                new DrawablePoint(X + 6, Y, ' '),
-                new DrawablePoint(X + 7, Y, ' '),
-                new DrawablePoint(X + 8, Y, '\u255A'),
-                new DrawablePoint(X + 9, Y, '\u2550'),
-                new DrawablePoint(X + 10, Y, '\u2550'),
-                new DrawablePoint(X + 11, Y, '\u2557')
+                new DrawablePoint(X + W + 1, Y, '\u2557')
             };
 
+            for (int x = 1; x < W + 1; x++)
+            {
+                int xPoint = X + x;
+                int halfW = W / 2;
+                if (xPoint < (halfW - 2) || xPoint > (halfW + 3))
+                    points.Add(new DrawablePoint(xPoint, Y, '\u2550'));
+                else if (xPoint == (halfW - 2))
+                    points.Add(new DrawablePoint(xPoint, Y, '\u255D'));
+                else if (xPoint == (halfW + 3))
+                    points.Add(new DrawablePoint(xPoint, Y, '\u255A'));
+                else
+                    points.Add(new DrawablePoint(xPoint, Y, ' '));
+            }
+
             // For each row
-            for (int y = Y + 1; y <= _h + Y; y++)
+            for (int y = Y + 1; y <= H + Y; y++)
             {
                 // Left border line
                 points.Add(new DrawablePoint(X, y, '\u2551'));
 
                 // Right border line
-                points.Add(new DrawablePoint(X + _w + 1, y, '\u2551'));
+                points.Add(new DrawablePoint(X + W + 1, y, '\u2551'));
             }
 
             // Bottom border line
-            points.Add(new DrawablePoint(X, Y + _h + 1, '\u255A'));
-            for (int x = X + 1; x <= _w + X + 1; x++)
-                points.Add(new DrawablePoint(x, Y + _h + 1, '\u2550'));
-            points.Add(new DrawablePoint(X + _w + 1, Y + _h + 1, '\u255D'));
+            points.Add(new DrawablePoint(X, Y + H + 1, '\u255A'));
+            for(int x = X + 1; x <= W + X + 1; x++)
+                points.Add(new DrawablePoint(x, Y + H + 1, '\u2550'));
+            points.Add(new DrawablePoint(X + W + 1, Y + H + 1, '\u255D'));
 
 
             // Generate single mutation for blocks and playfield borders

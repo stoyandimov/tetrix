@@ -8,7 +8,7 @@ namespace Tetrix.UI
     public class Renderer
     {
         readonly CancellationTokenSource _cts;
-        readonly BlockingCollection<GridMutation> _mutations = new BlockingCollection<GridMutation>();  
+        readonly BlockingCollection<GridMutation> _mutations = new BlockingCollection<GridMutation>();
 
         public Renderer()
             =>_cts = new CancellationTokenSource();
