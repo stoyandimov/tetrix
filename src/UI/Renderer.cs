@@ -20,10 +20,36 @@ namespace Tetrix.UI
         public void Render(GridMutation mutation)
             => _mutations.Add(mutation);
 
+        public void Render(int x, int y, char symbol, int color = DrawablePoint.DefaultForeColor, char d = ' ')
+        {
+            var dp = new DrawablePoint(x, y, color, symbol, d);
+            var m = new GridMutation();
+            m.AddTarget(dp);
+            Render(m);
+        }
+
+        public void Render(int x, int y, char symbol, int oldX, int oldY, int color = DrawablePoint.DefaultForeColor, char d = ' ')
+        {
+            var @new = new DrawablePoint(x, y, color, symbol, d);
+            var old = new Point(oldX, oldY);
+            var mut = new GridMutation();
+            mut.AddSource(old);
+            mut.AddTarget(@new);
+            Render(mut);
+        }
+
+
         public void BeginRendering()
         {
             Clear();
             Task.Run(() => ProcessUpdates(_cts.Token), _cts.Token);
+        }
+
+        public void Clear(int x, int y)
+        {
+            var mut = new GridMutation();
+            mut.AddSource(x, y);
+            Render(mut);
         }
 
         public void Clear()

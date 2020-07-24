@@ -6,7 +6,6 @@ using Tetrix.UI;
 using System.Threading;
 using Tetrix.UI.Text;
 using tetrix.Storage;
-using System.Threading.Tasks;
 
 namespace Tetrix
 {
@@ -102,18 +101,20 @@ namespace Tetrix
                         case ConsoleKey.F5: Render(); break;
                         case ConsoleKey.Escape:
                             timer.Change(0, Timeout.Infinite);
-                            var next = (new InGameMenu(_renderer)).WhatsNext();
+                            var next = new InGameMenu(_renderer).WhatsNext();
                             switch (next)
                             {
                                 case MenuOptions.SaveGame:
-                                    (new JsonRepository()).Save(new SavableData()
+                                    new JsonRepository().Save(new SavableData()
                                     {
+                                        NextTetro = _stage.Scoreboard.NextTetro.Type,
+                                        CurrentTetro = _curTetro.Type,
                                         Blocks = GetBlocks(),
                                         Score = _stage.Scoreboard.GetScore(),
                                     });
                                     // Show game saved message for 2 seconds and quit
                                     _renderer.WriteText(17, 15, "Game saved!");
-                                    Thread.Sleep(2000);
+                                    Thread.Sleep(1000);
                                     _renderer.WriteText(17, 15, "           ");
                                     keepRuuning = false;
                                     break;
@@ -136,6 +137,8 @@ namespace Tetrix
                 }
             }
         }
+
+        public void SetCurrentTetro(Tetro tetro) => _curTetro = tetro;
 
         public void MoveLeft()
         {

@@ -6,13 +6,13 @@ namespace Tetrix
 {
     public class Scoreboard
     {
-        Renderer _renderer;
-        Tetro _nextTetro;
+        readonly Renderer _renderer;
+        public Tetro NextTetro { get; private set; }
         int _score;
-        int _x;
-        int _y;
+        readonly int _x;
+        readonly int _y;
 
-        public Scoreboard(Renderer renderer, int x, int y)
+        public Scoreboard(int x, int y, Renderer renderer)
         {
             _renderer = renderer;
             _x = x;
@@ -28,13 +28,13 @@ namespace Tetrix
             RenderScore();
         }
 
-        public void UpdateNextTetro(Tetro next)
+        public void SetNextTetro(Tetro next)
         {
-            if (_nextTetro != null)
-                _renderer.Render(ClearTetro(_nextTetro));
+            if (NextTetro != null)
+                _renderer.Render(ClearTetro(NextTetro));
 
-            _nextTetro = next;
-            _renderer.Render(RenderNextTetro(_nextTetro));
+            NextTetro = next;
+            _renderer.Render(RenderNextTetro(NextTetro));
         }
 
         public void RenderScore()
@@ -42,7 +42,7 @@ namespace Tetrix
 
         private GridMutation RenderNextTetro(Tetro tetro)
         {
-            var m = (new TextWriter()).WriteText(_x, _y + 2, "next:");
+            var m = new TextWriter().WriteText(_x, _y + 2, "next:");
             foreach(Block b in tetro.Blocks)
                 m.AddTarget(new DrawablePoint(b.X + _x + 2, b.Y + 4, b.ForeColor, b.Symbol, b.Debug));
 

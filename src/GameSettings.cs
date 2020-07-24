@@ -1,5 +1,3 @@
-using System.Linq;
-
 namespace Tetrix
 {
     public class GameSettings
@@ -24,7 +22,7 @@ namespace Tetrix
                         break;
                     // Game speed
                     case "-s": case "--speed":
-                        int speed = 0;
+                        int speed;
                         if (int.TryParse(s[i + 1], out speed))
                         {
                             if (speed < 1 || speed > 10)

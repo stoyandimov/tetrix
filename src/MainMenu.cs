@@ -6,7 +6,7 @@ namespace Tetrix
 {
     public class MainMenu
     {
-        Renderer _renderer;
+        private readonly Renderer _renderer;
         public MainMenu(Renderer renderer)
             => _renderer = renderer;
 
@@ -28,24 +28,21 @@ namespace Tetrix
                 {
                     case ConsoleKey.UpArrow:
                     case ConsoleKey.DownArrow:
+                        if (input.Key == ConsoleKey.UpArrow && currentOption != MenuOptions.StartGame)
+                            currentOption--;
+                        else if (input.Key == ConsoleKey.DownArrow && currentOption != MenuOptions.Exit)
+                            currentOption++;
+
+                        _renderer.Clear(2, 7);
+                        _renderer.Clear(2, 8);
+                        _renderer.Clear(2, 9);
+
                         if (currentOption == MenuOptions.StartGame)
-                        {
-                            currentOption = MenuOptions.Load;
-                            _renderer.Render(
-                                GridMutation.Create(2, 7, new DrawablePoint(2, 8, '-')));
-                        }
+                            _renderer.Render(2, 7, '-');
                         else if (currentOption == MenuOptions.Load)
-                        {
-                            currentOption = MenuOptions.Exit;
-                            _renderer.Render(
-                                GridMutation.Create(2, 8, new DrawablePoint(2, 9, '-')));
-                        }
+                            _renderer.Render(2, 8, '-');
                         else
-                        {
-                            currentOption = MenuOptions.StartGame;
-                            _renderer.Render(
-                                GridMutation.Create(2, 9, new DrawablePoint(2, 7, '-')));
-                        }
+                            _renderer.Render(2, 9, '-');
                         break;
                     case ConsoleKey.Enter:
                         return currentOption;

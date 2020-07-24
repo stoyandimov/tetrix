@@ -7,7 +7,7 @@ namespace Tetrix
 {
     public class InGameMenu
     {
-        Renderer _renderer;
+        private readonly Renderer _renderer;
         public InGameMenu(Renderer renderer)
             => _renderer = renderer;
 
@@ -21,9 +21,10 @@ namespace Tetrix
                 _renderer.WriteText(1, 7, " - Resume");
                 _renderer.WriteText(1, 8, "   Save");
                 _renderer.WriteText(1, 9, "   Quit");
-
             }, null, 100, Timeout.Infinite);
+
             MenuOptions currentOption = MenuOptions.ResumeGame;
+
             bool run = true;
             while(run)
             {
@@ -39,21 +40,16 @@ namespace Tetrix
                         else if (input.Key == ConsoleKey.DownArrow && currentOption != MenuOptions.QuitGame)
                             currentOption++;
 
+                        _renderer.Clear(2, 7);
+                        _renderer.Clear(2, 8);
+                        _renderer.Clear(2, 9);
+
                         if (currentOption == MenuOptions.ResumeGame)
-                        {
-                            _renderer.Render(GridMutation.Create(2, 8, new DrawablePoint(2, 7, '-')));
-                            _renderer.Render(GridMutation.Create(2, 9, new DrawablePoint(2, 7, '-')));
-                        }
+                            _renderer.Render(2, 7, '-');
                         else if (currentOption == MenuOptions.SaveGame)
-                        {
-                            _renderer.Render(GridMutation.Create(2, 7, new DrawablePoint(2, 8, '-')));
-                            _renderer.Render(GridMutation.Create(2, 9, new DrawablePoint(2, 8, '-')));
-                        }
+                            _renderer.Render(2, 8, '-');
                         else
-                        {
-                            _renderer.Render(GridMutation.Create(2, 7, new DrawablePoint(2, 9, '-')));
-                            _renderer.Render(GridMutation.Create(2, 8, new DrawablePoint(2, 9, '-')));
-                        }
+                            _renderer.Render(2, 9, '-');
                         break;
                     case ConsoleKey.Enter:
                         return currentOption;

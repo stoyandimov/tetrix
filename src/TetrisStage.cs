@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Threading;
 using tetrix.Storage;
 using Tetrix.Tetroes;
@@ -21,13 +22,13 @@ namespace Tetrix
             _settings = settings;
             _randomizer = new Random();
             _playfield = new Playfield(0, 0, renderer, this);
-            Scoreboard = new Scoreboard(renderer, 17, 2);
+            Scoreboard = new Scoreboard(17, 2, renderer);
         }
 
         public void Render()
         {
             Scoreboard.RenderScore();
-            Scoreboard.UpdateNextTetro(_nextTetro);
+            Scoreboard.SetNextTetro(_nextTetro);
             _playfield.Render();
         }
 
@@ -49,7 +50,7 @@ namespace Tetrix
             _nextTetro = GenerateRandomTetro();
 
             // Update Scoreboard
-            Scoreboard.UpdateNextTetro(_nextTetro);
+            Scoreboard.SetNextTetro(_nextTetro);
 
             return curTetro;
         }
@@ -74,12 +75,18 @@ namespace Tetrix
         {
             _renderer.Clear();
             _playfield.RowRemoved += RowRemovedHandler;
-            // Load score
+            var currTetro = Tetro.CreateTetro(savableData.CurrentTetro, _playfield);
+            var nextTetro = Tetro.CreateTetro(savableData.NextTetro, _playfield);
+
+            _nextTetro = nextTetro;
+            // Load scoreboard
             Scoreboard.IncrementScore(savableData.Score);
+            Scoreboard.SetNextTetro(nextTetro);
             Scoreboard.RenderScore();
 
             // Load blocks
-            _playfield.SetBlocks(savableData.Blocks);
+            _playfield.SetBlocks(savableData.Blocks.Concat(currTetro.Blocks));
+            _playfield.SetCurrentTetro(currTetro);
             _playfield.Start(_settings.Speed);
             Thread.Sleep(300);
         }
