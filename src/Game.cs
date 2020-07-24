@@ -9,14 +9,14 @@ namespace Tetrix
     {
         private readonly GameSettings _settings;
 
-        public Game(GameSettings settings) 
+        public Game(GameSettings settings)
             => _settings = settings;
 
         public void Bootstrap()
         {
             try 
             {
-                var renderer = new Renderer();
+                var renderer = new Renderer(_settings);
                 renderer.BeginRendering();
                 var mainMenu = new MainMenu(renderer);
                 var run = true;

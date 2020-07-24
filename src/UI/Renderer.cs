@@ -7,11 +7,15 @@ namespace Tetrix.UI
 {
     public class Renderer
     {
+        private readonly GameSettings _settings;
         readonly CancellationTokenSource _cts;
         readonly BlockingCollection<GridMutation> _mutations = new BlockingCollection<GridMutation>();
 
-        public Renderer()
-            =>_cts = new CancellationTokenSource();
+        public Renderer(GameSettings settings)
+        {
+            _settings = settings;
+            _cts = new CancellationTokenSource();
+        }
 
         public void Render(GridMutation mutation)
             => _mutations.Add(mutation);
@@ -54,7 +58,7 @@ namespace Tetrix.UI
                     if (Console.ForegroundColor != (ConsoleColor) p.ForeColor)
                         Console.ForegroundColor = (ConsoleColor) p.ForeColor;
                     Console.SetCursorPosition(p.X, p.Y);
-                    Console.Write(p.Symbol);
+                    Console.Write(_settings.Debug ? p.Debug : p.Symbol);
                 }
                 if (cancellationToken.IsCancellationRequested)
                     break;
