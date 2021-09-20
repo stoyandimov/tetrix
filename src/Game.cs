@@ -9,17 +9,19 @@ namespace Tetrix
     {
         private readonly GameSettings _settings;
         private readonly IRenderer _renderer;
-        public Game(GameSettings settings, IRenderer renderer)
+        private readonly InputQueue _inputQueue;
+        public Game(GameSettings settings, IRenderer renderer, InputQueue inputQueue)
         {
             _settings = settings;
             _renderer = renderer;
+            _inputQueue = inputQueue;
         }
         public void Bootstrap()
         {
             try
             {
                 _renderer.BeginRendering();
-                var mainMenu = new MainMenu(_renderer);
+                var mainMenu = new MainMenu(_renderer, _inputQueue);
                 var run = true;
                 while(run)
                 {
@@ -31,12 +33,12 @@ namespace Tetrix
                             break;
                         case MenuOptions.Load:
                             var storage = new JsonRepository();
-                            var stage = new TetrisStage(_renderer, _settings);
+                            var stage = new TetrisStage(_renderer, _settings, _inputQueue);
                             stage.Load(storage.Load());
                             // game finished
                             break;
                         case MenuOptions.StartGame:
-                            stage = new TetrisStage(_renderer, _settings);
+                            stage = new TetrisStage(_renderer, _settings, _inputQueue);
                             stage.Start();
                             // game finished
                             break;

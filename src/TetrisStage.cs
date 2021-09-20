@@ -14,12 +14,14 @@ namespace Tetrix
         private readonly Random _randomizer;
         private readonly IRenderer _renderer;
         private readonly GameSettings _settings;
+        private readonly InputQueue _inputQueue;
         private Tetro _nextTetro;
 
-        public TetrisStage(IRenderer renderer, GameSettings settings)
+        public TetrisStage(IRenderer renderer, GameSettings settings, InputQueue inputQueue)
         {
             _renderer = renderer;
             _settings = settings;
+            _inputQueue = inputQueue;
             _randomizer = new Random();
             _playfield = new Playfield(0, 0, renderer, this);
             Scoreboard = new Scoreboard(17, 2, renderer);
@@ -67,7 +69,7 @@ namespace Tetrix
             _renderer.Clear();
             _playfield.RowRemoved += RowRemovedHandler;
             Scoreboard.RenderScore();
-            _playfield.Start(_settings.Speed);
+            _playfield.Start(_settings.Speed, _inputQueue);
             Thread.Sleep(300);
         }
 
@@ -87,7 +89,7 @@ namespace Tetrix
             // Load blocks
             _playfield.SetBlocks(savableData.Blocks.Concat(currTetro.Blocks));
             _playfield.SetCurrentTetro(currTetro);
-            _playfield.Start(_settings.Speed);
+            _playfield.Start(_settings.Speed, _inputQueue);
             Thread.Sleep(300);
         }
     }

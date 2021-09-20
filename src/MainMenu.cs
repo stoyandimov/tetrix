@@ -7,11 +7,16 @@ namespace Tetrix
     public class MainMenu
     {
         private readonly IRenderer _renderer;
-        public MainMenu(IRenderer renderer)
-            => _renderer = renderer;
+        private readonly InputQueue _inputQueue;
+        public MainMenu(IRenderer renderer, InputQueue inputQueue)
+        {
+            _renderer = renderer;
+            _inputQueue = inputQueue;
+        }
 
         public MenuOptions WhatsNext()
         {
+							System.Console.WriteLine("What's next...");
             _renderer.Clear();
             _renderer.WriteFiglet(1, 0, "TetriS");
             _renderer.WriteText(1, 7, " - Start game");
@@ -23,14 +28,14 @@ namespace Tetrix
             bool run = true;
             while(run)
             {
-                ConsoleKeyInfo input = Console.ReadKey(true);
-                switch(input.Key)
+                ConsoleKey input = _inputQueue.GetNextInput();
+                switch(input)
                 {
                     case ConsoleKey.UpArrow:
                     case ConsoleKey.DownArrow:
-                        if (input.Key == ConsoleKey.UpArrow && currentOption != MenuOptions.StartGame)
+                        if (input == ConsoleKey.UpArrow && currentOption != MenuOptions.StartGame)
                             currentOption--;
-                        else if (input.Key == ConsoleKey.DownArrow && currentOption != MenuOptions.Exit)
+                        else if (input == ConsoleKey.DownArrow && currentOption != MenuOptions.Exit)
                             currentOption++;
 
                         _renderer.Clear(2, 7);

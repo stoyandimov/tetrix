@@ -82,15 +82,15 @@ namespace Tetrix
 
         bool keepRuuning = true;
 
-        public void Start(int speed)
+        public void Start(int speed, InputQueue inputQueue)
         {
             Render();
             using (var timer = new Timer(Progress, null, 0, 1100 - (speed * 100)))
             {
                 while (keepRuuning)
                 {
-                    ConsoleKeyInfo input = Console.ReadKey(true);
-                    switch (input.Key)
+                    ConsoleKey input = inputQueue.GetNextInput();
+                    switch (input)
                     {
                         case ConsoleKey.Q:
                         case ConsoleKey.X: keepRuuning = false; break;
@@ -101,7 +101,7 @@ namespace Tetrix
                         case ConsoleKey.F5: Render(); break;
                         case ConsoleKey.Escape:
                             timer.Change(0, Timeout.Infinite);
-                            var next = new InGameMenu(_renderer).WhatsNext();
+                            var next = new InGameMenu(_renderer, inputQueue).WhatsNext();
                             switch (next)
                             {
                                 case MenuOptions.SaveGame:

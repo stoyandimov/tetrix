@@ -10,9 +10,11 @@ namespace Tetrix
         {
             PrepareConsole();
 
+            var inputQueue = new InputQueue();
+            System.Threading.Tasks.Task.Run(() => { while (true) inputQueue.AddInput(Console.ReadKey(true).Key); });
             var settings = new GameSettings(args);
             var renderer = new Renderer(settings);
-            var game = new Game(settings, renderer);
+            var game = new Game(settings, renderer, inputQueue);
             game.Bootstrap(); // blocks
             game.Shutdown();
 

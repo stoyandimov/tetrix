@@ -8,8 +8,12 @@ namespace Tetrix
     public class InGameMenu
     {
         private readonly IRenderer _renderer;
-        public InGameMenu(IRenderer renderer)
-            => _renderer = renderer;
+        private readonly InputQueue _inputQueue;
+        public InGameMenu(IRenderer renderer, InputQueue inputQueue)
+        {
+            _renderer = renderer;
+            _inputQueue = inputQueue;
+        }
 
         public MenuOptions WhatsNext()
         {
@@ -28,16 +32,16 @@ namespace Tetrix
             bool run = true;
             while(run)
             {
-                ConsoleKeyInfo input = Console.ReadKey(true);
-                switch(input.Key)
+                ConsoleKey input = _inputQueue.GetNextInput();
+                switch(input)
                 {
                     case ConsoleKey.Escape:
                         return MenuOptions.ResumeGame;
                     case ConsoleKey.UpArrow:
                     case ConsoleKey.DownArrow:
-                        if (input.Key == ConsoleKey.UpArrow && currentOption != MenuOptions.ResumeGame)
+                        if (input == ConsoleKey.UpArrow && currentOption != MenuOptions.ResumeGame)
                             currentOption--;
-                        else if (input.Key == ConsoleKey.DownArrow && currentOption != MenuOptions.QuitGame)
+                        else if (input == ConsoleKey.DownArrow && currentOption != MenuOptions.QuitGame)
                             currentOption++;
 
                         _renderer.Clear(2, 7);
