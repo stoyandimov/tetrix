@@ -6,13 +6,13 @@ namespace Tetrix
 {
     public class Scoreboard
     {
-        readonly Renderer _renderer;
+        readonly IRenderer _renderer;
         public Tetro NextTetro { get; private set; }
         int _score;
         readonly int _x;
         readonly int _y;
 
-        public Scoreboard(int x, int y, Renderer renderer)
+        public Scoreboard(int x, int y, IRenderer renderer)
         {
             _renderer = renderer;
             _x = x;

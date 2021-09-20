@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Text;
+using Tetrix.UI;
 
 namespace Tetrix
 {
@@ -10,7 +11,8 @@ namespace Tetrix
             PrepareConsole();
 
             var settings = new GameSettings(args);
-            var game = new Game(settings);
+            var renderer = new Renderer(settings);
+            var game = new Game(settings, renderer);
             game.Bootstrap(); // blocks
             game.Shutdown();
 

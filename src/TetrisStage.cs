@@ -12,11 +12,11 @@ namespace Tetrix
         private readonly Playfield _playfield;
         public readonly Scoreboard Scoreboard;
         private readonly Random _randomizer;
-        private readonly Renderer _renderer;
+        private readonly IRenderer _renderer;
         private readonly GameSettings _settings;
         private Tetro _nextTetro;
 
-        public TetrisStage(Renderer renderer, GameSettings settings)
+        public TetrisStage(IRenderer renderer, GameSettings settings)
         {
             _renderer = renderer;
             _settings = settings;

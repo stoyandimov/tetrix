@@ -7,8 +7,8 @@ namespace Tetrix
 {
     public class InGameMenu
     {
-        private readonly Renderer _renderer;
-        public InGameMenu(Renderer renderer)
+        private readonly IRenderer _renderer;
+        public InGameMenu(IRenderer renderer)
             => _renderer = renderer;
 
         public MenuOptions WhatsNext()

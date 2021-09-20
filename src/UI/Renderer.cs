@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace Tetrix.UI
 {
-    public class Renderer
+    public class Renderer : IRenderer
     {
         private readonly GameSettings _settings;
         readonly CancellationTokenSource _cts;

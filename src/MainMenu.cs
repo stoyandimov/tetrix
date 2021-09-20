@@ -6,8 +6,8 @@ namespace Tetrix
 {
     public class MainMenu
     {
-        private readonly Renderer _renderer;
-        public MainMenu(Renderer renderer)
+        private readonly IRenderer _renderer;
+        public MainMenu(IRenderer renderer)
             => _renderer = renderer;
 
         public MenuOptions WhatsNext()

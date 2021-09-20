@@ -23,7 +23,7 @@ namespace Tetrix
 
         private readonly TetrisStage _stage;
 
-        private readonly Renderer _renderer;
+        private readonly IRenderer _renderer;
 
         Tetro _curTetro;
 
@@ -36,7 +36,7 @@ namespace Tetrix
             => RowRemoved?.Invoke(this, e);
 
         // Constructor
-        public Playfield(int x, int y, Renderer renderer, TetrisStage stage)
+        public Playfield(int x, int y, IRenderer renderer, TetrisStage stage)
         {
             X = x;
             Y = y;
