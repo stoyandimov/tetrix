@@ -1,14 +1,7 @@
-namespace Tetrix.UI
-{
-    public class Point
-    {
-        public int X { get; set; }
-        public int Y { get; set; }
+namespace Tetrix.UI;
 
-        public Point(int x, int y)
-        {
-            X = x;
-            Y = y;
-        }
-    }
+public class Point(int x, int y)
+{
+	public int X { get; set; } = x;
+	public int Y { get; set; } = y;
 }

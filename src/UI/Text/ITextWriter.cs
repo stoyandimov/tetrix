@@ -1,7 +1,6 @@
-﻿namespace Tetrix.UI.Text
+﻿namespace Tetrix.UI.Text;
+
+interface ITextWriter
 {
-    interface ITextWriter
-    {
-        GridMutation WriteText(int x, int y, string text);
-    }
+	GridMutation WriteText(int x, int y, string text);
 }

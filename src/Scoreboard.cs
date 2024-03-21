@@ -1,61 +1,54 @@
 using Tetrix.Tetroes;
 using Tetrix.UI;
 using Tetrix.UI.Text;
+using UiTextWriter = Tetrix.UI.Text.TextWriter;
 
-namespace Tetrix
+namespace Tetrix;
+
+public class Scoreboard(int x, int y, IRenderer renderer)
 {
-    public class Scoreboard
-    {
-        readonly IRenderer _renderer;
-        public Tetro NextTetro { get; private set; }
-        int _score;
-        readonly int _x;
-        readonly int _y;
+	readonly IRenderer _renderer = renderer;
+	public Tetro NextTetro { get; private set; }
+	int _score;
+	readonly int _x = x;
+	readonly int _y = y;
 
-        public Scoreboard(int x, int y, IRenderer renderer)
-        {
-            _renderer = renderer;
-            _x = x;
-            _y = y;
-        }
+	public int GetScore()
+		=> _score;
 
-        public int GetScore()
-            => _score;
+	public void IncrementScore(int count)
+	{
+		_score += count;
+		RenderScore();
+	}
 
-        public void IncrementScore(int count)
-        {
-            _score += count;
-            RenderScore();
-        }
+	public void SetNextTetro(Tetro next)
+	{
+		if (NextTetro != null)
+			_renderer.Render(ClearTetro(NextTetro));
 
-        public void SetNextTetro(Tetro next)
-        {
-            if (NextTetro != null)
-                _renderer.Render(ClearTetro(NextTetro));
+		NextTetro = next;
+		_renderer.Render(RenderNextTetro(NextTetro));
+	}
 
-            NextTetro = next;
-            _renderer.Render(RenderNextTetro(NextTetro));
-        }
+	public void RenderScore()
+		=> _renderer.WriteText(_x, _y + 8, $"score: {_score}");
 
-        public void RenderScore()
-            => _renderer.WriteText(_x, _y + 8, $"score: {_score}");
+	private GridMutation RenderNextTetro(Tetro tetro)
+	{
+		var m = new UiTextWriter().WriteText(_x, _y + 2, "next:");
+		foreach (Block b in tetro.Blocks)
+			m.AddTarget(new DrawablePoint(b.X + _x + 2, b.Y + 4, b.ForeColor, b.Symbol, b.Debug));
 
-        private GridMutation RenderNextTetro(Tetro tetro)
-        {
-            var m = new TextWriter().WriteText(_x, _y + 2, "next:");
-            foreach(Block b in tetro.Blocks)
-                m.AddTarget(new DrawablePoint(b.X + _x + 2, b.Y + 4, b.ForeColor, b.Symbol, b.Debug));
+		return m;
+	}
 
-            return m;
-        }
+	private GridMutation ClearTetro(Tetro tetro)
+	{
+		var m = new GridMutation();
+		foreach (DrawablePoint b in tetro.Blocks)
+			m.AddSource(b.X + _x + 2, b.Y + 4);
 
-        private GridMutation ClearTetro(Tetro tetro)
-        {
-            var m = new GridMutation();
-            foreach(DrawablePoint b in tetro.Blocks)
-                m.AddSource(b.X + _x + 2, b.Y + 4);
-
-            return m;
-        }
-    }
+		return m;
+	}
 }

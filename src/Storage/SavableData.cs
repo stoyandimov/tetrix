@@ -1,15 +1,12 @@
-﻿using System.Collections.Generic;
-using Tetrix;
-using Tetrix.Tetroes;
+﻿using Tetrix.Tetroes;
 
-namespace tetrix.Storage
+namespace Tetrix.Storage;
+
+public class SavableData
 {
-    public class SavableData
-    {
-        public int GameSpeed { get; set; }
-        public int Score { get; set; }
-        public TetroTypes CurrentTetro { get; set; }
-        public TetroTypes NextTetro { get; set; }
-        public IEnumerable<Block> Blocks { get; set; }
-    }
+	public int GameSpeed { get; set; }
+	public int Score { get; set; }
+	public TetroTypes CurrentTetro { get; set; }
+	public TetroTypes NextTetro { get; set; }
+	public IEnumerable<Block> Blocks { get; set; }
 }

@@ -1,27 +1,11 @@
-﻿using Newtonsoft.Json;
-using System.IO;
+﻿using System.IO;
+using System.Text.Json;
 
-namespace tetrix.Storage
+namespace Tetrix.Storage;
+
+public static class JsonRepository
 {
-    class JsonRepository
-    {
-        public void Save(SavableData savableData)
-        {
-            using (StringWriter writer = new StringWriter())
-            {
-                JsonSerializer.CreateDefault().Serialize(writer, savableData, typeof(SavableData));
-                File.WriteAllText("saved.json", writer.GetStringBuilder().ToString());
-            }
-        }
-
-        public SavableData Load()
-        {
-            var data = File.ReadAllText("saved.json");
-            using (StringReader reader = new StringReader(data))
-            {
-                var savableData = JsonSerializer.CreateDefault().Deserialize(reader, typeof(SavableData)) as SavableData;
-                return savableData;
-            }
-        }
-    }
+	private const string SAVE_FN = "saved.json";
+	public static void Save(SavableData savableData) => File.WriteAllText(SAVE_FN, JsonSerializer.Serialize(savableData));
+	public static SavableData Load() => JsonSerializer.Deserialize<SavableData>(File.ReadAllText(SAVE_FN));
 }

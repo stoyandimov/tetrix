@@ -1,23 +1,20 @@
-using System.Threading;
+namespace Tetrix.UI;
 
-namespace Tetrix.UI
+public interface IRenderer
 {
-    public interface IRenderer
-    {
-        void Render(GridMutation mutation);
+	void Render(GridMutation mutation);
 
-        void Render(int x, int y, char symbol, int color = DrawablePoint.DefaultForeColor, char d = ' ');
+	void Render(int x, int y, char symbol, int color = DrawablePoint.DefaultForeColor, char d = ' ');
 
-        void Render(int x, int y, char symbol, int oldX, int oldY, int color = DrawablePoint.DefaultForeColor, char d = ' ');
+	void Render(int x, int y, char symbol, int oldX, int oldY, int color = DrawablePoint.DefaultForeColor, char d = ' ');
 
-        void BeginRendering();
+	void BeginRendering();
 
-        void Clear(int x, int y);
+	void Clear(int x, int y);
 
-        void Clear();
+	void Clear();
 
-        void EndRendering();
+	void EndRendering();
 
-        void ProcessUpdates(CancellationToken cancellationToken);
-    }
+	void ProcessUpdates(CancellationToken cancellationToken);
 }
