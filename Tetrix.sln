@@ -1,0 +1,34 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31903.59
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{0C467D1D-2F27-4E68-A0C3-E41ADFFC2A32}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tetrix.GameEngine", "src\Tetrix.GameEngine\Tetrix.GameEngine.csproj", "{D0E216D3-E299-451A-B36A-AF5658BC1851}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tetrix.Cli", "src\Tetrix.Cli\Tetrix.Cli.csproj", "{79DAB8B2-6744-4B8D-8B55-DE63FEC264DF}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{D0E216D3-E299-451A-B36A-AF5658BC1851}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D0E216D3-E299-451A-B36A-AF5658BC1851}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D0E216D3-E299-451A-B36A-AF5658BC1851}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D0E216D3-E299-451A-B36A-AF5658BC1851}.Release|Any CPU.Build.0 = Release|Any CPU
+		{79DAB8B2-6744-4B8D-8B55-DE63FEC264DF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{79DAB8B2-6744-4B8D-8B55-DE63FEC264DF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{79DAB8B2-6744-4B8D-8B55-DE63FEC264DF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{79DAB8B2-6744-4B8D-8B55-DE63FEC264DF}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{D0E216D3-E299-451A-B36A-AF5658BC1851} = {0C467D1D-2F27-4E68-A0C3-E41ADFFC2A32}
+		{79DAB8B2-6744-4B8D-8B55-DE63FEC264DF} = {0C467D1D-2F27-4E68-A0C3-E41ADFFC2A32}
+	EndGlobalSection
+EndGlobal
