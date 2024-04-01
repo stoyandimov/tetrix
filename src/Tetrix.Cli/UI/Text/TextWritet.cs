@@ -1,4 +1,4 @@
-namespace Tetrix.GameEngine.UI.Text;
+namespace Tetrix.Cli.UI.Text;
 
 public class TextWriter : ITextWriter
 {

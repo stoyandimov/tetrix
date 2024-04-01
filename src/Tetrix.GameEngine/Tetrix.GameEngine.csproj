@@ -5,8 +5,4 @@
 		<ImplicitUsings>enable</ImplicitUsings>
 	</PropertyGroup>
 
-	<ItemGroup>
-		<PackageReference Include="Colorful.Console" Version="1.2.1" />
-	</ItemGroup>
-
 </Project>

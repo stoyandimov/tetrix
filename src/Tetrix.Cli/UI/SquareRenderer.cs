@@ -1,5 +1,3 @@
-using Tetrix.GameEngine.UI;
-
 namespace Tetrix.Cli.UI;
 
 public class SquareRenderer(GameSettings settings) : Renderer(settings)

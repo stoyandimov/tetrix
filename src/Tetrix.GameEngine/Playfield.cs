@@ -1,105 +1,84 @@
-using System.Collections;
 using Tetrix.GameEngine.Tetroes;
-using Tetrix.GameEngine.UI;
-using Tetrix.GameEngine.UI.Text;
 
 namespace Tetrix.GameEngine;
 
-public class Playfield(int x, int y, IRenderer renderer, TetrisStage stage)
+public class Playfield(int h, int w, Func<int> randomizer)
 {
 	// Height of the playfield
-	public int H { get; private set; } = 20;
+	public int H { get; private set; } = h;
 
 	// Width of the playfield
-	public int W { get; private set; } = 10;
+	public int W { get; private set; } = w;
 
-	public int X { get; set; } = x;
-
-	public int Y { get; set; } = y;
-
-	private readonly TetrisStage _stage = stage;
-
-	private readonly IRenderer _renderer = renderer;
+	public Func<int> _randomizer;
 
 	public Tetro CurrentTetro { get; private set; }
+	public Tetro NextTetro { get; private set; }
 
 	// List of all block from all tetrominoes
 	private List<Block> _blocks = [];
 
-	public event EventHandler<RowRemovedEventArgs> RowRemoved;
+	public event EventHandler<int> RowRemoved;
+	public event EventHandler<PlayfieldGridMutation> PlayfieldGridChanged;
+	public event EventHandler<Tetro> CurrentTetroChanged;
+	public event EventHandler<Tetro> NextTetroChanged;
 
-	protected void OnRowRemoved(RowRemovedEventArgs e)
-		=> RowRemoved?.Invoke(this, e);
+	protected void OnRowRemoved(int e) => RowRemoved?.Invoke(this, e);
 
 	// Progresses the game - 1 move.
 	public bool Progress()
 	{
 		if (CurrentTetro == null)
-			ResetCurrentTetro();
+			ResetCurrentTetro(randomizer());
 
 		if (!CurrentTetro.CanMoveDown())
 		{
 			// Checks for full rows and removes if Any
 			RemoveFullRowsIfAny();
 			// Reset the current tetromino
-			ResetCurrentTetro();
+			ResetCurrentTetro(randomizer());
 			// If the new tetro cannot move done - game over
-			if (!CurrentTetro.CanMoveDown())
-			{
-				_renderer.WriteText(17, 13, "Game Over");
-				_renderer.WriteText(17, 15, "[press a key to go to menu]");
-				return false;
-			}
-			return true;
+			return CurrentTetro.CanMoveDown();
 		}
 
 		MoveDown();
 		return true;
 	}
 
-	public void Rotate()
-	{
-		CurrentTetro.BeginMutation();
-		CurrentTetro.Rotate();
-		_renderer.Render(CurrentTetro.EndMupation());
-	}
+	public void Rotate() => CurrentTetro.Rotate();
 
 	public void SetCurrentTetro(Tetro tetro) => CurrentTetro = tetro;
 
 	public void MoveLeft()
 	{
-		if (!CurrentTetro.CanMoveLeft())
-			return;
-
-		CurrentTetro.BeginMutation();
-		CurrentTetro.MoveLeft();
-		_renderer.Render(CurrentTetro.EndMupation());
+		if (CurrentTetro.CanMoveLeft())
+			CurrentTetro.MoveLeft();
 	}
 
 	public void MoveRight()
 	{
-		if (!CurrentTetro.CanMoveRight())
-			return;
-
-		CurrentTetro.BeginMutation();
-		CurrentTetro.MoveRight();
-		_renderer.Render(CurrentTetro.EndMupation());
+		if (CurrentTetro.CanMoveRight())
+			CurrentTetro.MoveRight();
 	}
 
 	public void MoveDown()
 	{
-		if (!CurrentTetro.CanMoveDown())
-			return;
-
-		CurrentTetro.BeginMutation();
-		CurrentTetro.MoveDown();
-		_renderer.Render(CurrentTetro.EndMupation());
+		if (CurrentTetro.CanMoveDown())
+			CurrentTetro.MoveDown();
 	}
 
+	public Tetro GenerateTetro(int i) => Tetro.CreateTetro((TetroTypes)i, this);
+
+
 	// Set current tetromino and generate the next one
-	protected void ResetCurrentTetro()
+	public void ResetCurrentTetro(int i)
 	{
-		CurrentTetro = _stage.GetNextTetro();
+		if (NextTetro == null)
+			NextTetro = GenerateTetro(i);
+		CurrentTetro = NextTetro;
+		CurrentTetroChanged?.Invoke(this, CurrentTetro);
+		NextTetro = GenerateTetro(i);
+		NextTetroChanged?.Invoke(this, NextTetro);
 
 		// Add all blocks from all tetrominoes to single List
 		// for faster rendering and colision detection
@@ -111,7 +90,7 @@ public class Playfield(int x, int y, IRenderer renderer, TetrisStage stage)
 	{
 		// Check for full rows
 		var rowsToRemove = new List<int>();
-		for (int y = Y; y <= H + Y; y++)
+		for (int y = 0; y <= H; y++)
 		{
 			var row = _blocks.Where(b => b.Y == y);
 			int count = row.Count();
@@ -119,41 +98,14 @@ public class Playfield(int x, int y, IRenderer renderer, TetrisStage stage)
 				rowsToRemove.Add(y);
 		}
 
-		var mutation = new GridMutation();
-		// If full rows remove the blocks
-		foreach (int row in rowsToRemove)
-		{
-			// Select blocks to remove
-			var blocksToRemove = new List<Block>();
-			foreach (Block b in _blocks.Where(b => b.Y == row))
-				blocksToRemove.Add(b);
-
-			// Remove blocks
-			foreach (Block b in blocksToRemove)
-			{
-				_blocks.Remove(b);
-				mutation.AddSource(b);
-			}
-
-			// Shift upper blocks down
-			foreach (Block b in _blocks.Where(_b => _b.Y < row))
-			{
-				mutation.AddSource(new DrawablePoint(b.X, b.Y, ' '));
-				++b.Y;
-				mutation.AddTarget(b);
-			}
-
-		}
-		_renderer.Render(mutation);
-
-		OnRowRemoved(RowRemovedEventArgs.Create(rowsToRemove.Count));
+		OnRowRemoved(rowsToRemove.Count);
 	}
 
 	// Check if a single block location (x, y) is available/empty 
 	public bool IsLocationAvailable(int x, int y)
 	{
 		// check out of boundries
-		if (x >= W + X + 1 || x < X + 1 || y >= H + Y + 1)
+		if (x >= W + 1 || x < 1 || y >= H + 1)
 			return false;
 
 		// check block colisions
@@ -172,59 +124,6 @@ public class Playfield(int x, int y, IRenderer renderer, TetrisStage stage)
 				return false;
 
 		return true;
-	}
-
-	// Renders the entire screen
-	public void Render()
-	{
-		var points = new List<DrawablePoint>
-		{
-			// Top border line
-			new(X, Y, '\u2554'),
-			new(X + W + 1, Y, '\u2557')
-		};
-
-		for (int x = 1; x < W + 1; x++)
-		{
-			int xPoint = X + x;
-			int halfW = W / 2;
-			if (xPoint < (halfW - 2) || xPoint > (halfW + 3))
-				points.Add(new(xPoint, Y, '\u2550'));
-			else if (xPoint == (halfW - 2))
-				points.Add(new(xPoint, Y, '\u255D'));
-			else if (xPoint == (halfW + 3))
-				points.Add(new(xPoint, Y, '\u255A'));
-			else
-				points.Add(new(xPoint, Y, ' '));
-		}
-
-		// For each row
-		for (int y = Y + 1; y <= H + Y; y++)
-		{
-			// Left border line
-			points.Add(new(X, y, '\u2551'));
-
-			// Right border line
-			points.Add(new(X + W + 1, y, '\u2551'));
-		}
-
-		// Bottom border line
-		points.Add(new(X, Y + H + 1, '\u255A'));
-		for (int x = X + 1; x <= W + X + 1; x++)
-			points.Add(new(x, Y + H + 1, '\u2550'));
-		points.Add(new(X + W + 1, Y + H + 1, '\u255D'));
-
-
-		// Generate single mutation for blocks and playfield borders
-		var mutation = new GridMutation();
-		foreach (DrawablePoint p in _blocks)
-			mutation.AddTarget(p);
-
-		// Add playfield border points
-		foreach (DrawablePoint p in points)
-			mutation.AddTarget(p);
-
-		_renderer.Render(mutation);
 	}
 
 	public IEnumerable<Block> GetBlocks()

@@ -1,6 +1,6 @@
+using Tetrix.Cli.UI;
+using Tetrix.Cli.UI.Text;
 using Tetrix.GameEngine.Storage;
-using Tetrix.GameEngine.UI;
-using Tetrix.GameEngine.UI.Text;
 
 namespace Tetrix.Cli;
 
@@ -34,15 +34,15 @@ public class Game(GameSettings settings, IRenderer renderer, InputQueue inputQue
 						stage = new TetrisStage(_renderer, _settings, _inputQueue);
 						stage.Start();
 						break;
-					case MenuOptions.SaveGame:
-						stage = new TetrisStage(_renderer, _settings, _inputQueue);
-						JsonRepository.Save(new SavableData(default, stage.Scoreboard.GetScore(), stage.Playfield.CurrentTetro.Type, stage.Scoreboard.NextTetro.Type, stage.Playfield.GetBlocks()));
-						// Show game saved message for 2 seconds and quit
-						_renderer.WriteText(17, 15, "Game saved!");
-						Thread.Sleep(1000);
-						_renderer.WriteText(17, 15, "		   ");
-						run = false;
-						break;
+					// case MenuOptions.SaveGame:
+					// 	stage = new TetrisStage(_renderer, _settings, _inputQueue);
+					// 	JsonRepository.Save(new SavableData(default, stage.Scoreboard.GetScore(), stage.Playfield.CurrentTetro.Type, stage.Playfield.NextTetro.Type, stage.Playfield.GetBlocks()));
+					// 	// Show game saved message for 2 seconds and quit
+					// 	_renderer.WriteText(17, 15, "Game saved!");
+					// 	Thread.Sleep(1000);
+					// 	_renderer.WriteText(17, 15, "		   ");
+					// 	run = false;
+					// 	break;
 					case MenuOptions.ResumeGame:
 						stage = new TetrisStage(_renderer, _settings, _inputQueue);
 						_renderer.Clear();

@@ -9,6 +9,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tetrix.GameEngine", "src\Te
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tetrix.Cli", "src\Tetrix.Cli\Tetrix.Cli.csproj", "{79DAB8B2-6744-4B8D-8B55-DE63FEC264DF}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{51DA786D-76CB-4B00-AD2A-C8F8F2449E95}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tetrix.GameEngineTests", "tests\Tetrix.GameEngineTests\Tetrix.GameEngineTests.csproj", "{A587BED5-7FD7-4D4C-AD71-D34DB9D1CD11}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -26,9 +30,14 @@ Global
 		{79DAB8B2-6744-4B8D-8B55-DE63FEC264DF}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{79DAB8B2-6744-4B8D-8B55-DE63FEC264DF}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{79DAB8B2-6744-4B8D-8B55-DE63FEC264DF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A587BED5-7FD7-4D4C-AD71-D34DB9D1CD11}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A587BED5-7FD7-4D4C-AD71-D34DB9D1CD11}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A587BED5-7FD7-4D4C-AD71-D34DB9D1CD11}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A587BED5-7FD7-4D4C-AD71-D34DB9D1CD11}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{D0E216D3-E299-451A-B36A-AF5658BC1851} = {0C467D1D-2F27-4E68-A0C3-E41ADFFC2A32}
 		{79DAB8B2-6744-4B8D-8B55-DE63FEC264DF} = {0C467D1D-2F27-4E68-A0C3-E41ADFFC2A32}
+		{A587BED5-7FD7-4D4C-AD71-D34DB9D1CD11} = {51DA786D-76CB-4B00-AD2A-C8F8F2449E95}
 	EndGlobalSection
 EndGlobal

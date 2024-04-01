@@ -1,6 +1,6 @@
-namespace Tetrix.GameEngine.UI;
+namespace Tetrix.Cli.UI;
 
-public class GridMutation
+public class GridMutation : PlayfieldGridMutation
 {
 	public List<Point> SourcePositions { get; private set; } = [];
 	public List<DrawablePoint> TargetPositions { get; private set; } = [];

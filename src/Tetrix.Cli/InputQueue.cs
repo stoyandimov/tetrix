@@ -1,6 +1,6 @@
 ﻿using System.Collections.Concurrent;
 
-namespace Tetrix.GameEngine;
+namespace Tetrix.Cli;
 
 public class InputQueue
 {

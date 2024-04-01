@@ -1,4 +1,4 @@
-﻿namespace Tetrix.GameEngine.UI;
+﻿namespace Tetrix.Cli.UI;
 
 public class DrawablePoint(int x, int y, char symbol) : Point(x, y)
 {

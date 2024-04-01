@@ -1,5 +1,5 @@
-using Tetrix.GameEngine.UI;
-using Tetrix.GameEngine.UI.Text;
+using Tetrix.Cli.UI;
+using Tetrix.Cli.UI.Text;
 
 namespace Tetrix.Cli;
 

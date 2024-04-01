@@ -1,5 +1,3 @@
-using Tetrix.GameEngine.UI;
-
 namespace Tetrix.GameEngine.Tetroes;
 
 public abstract class Tetro(int x, int y, Playfield playfield)
@@ -10,11 +8,8 @@ public abstract class Tetro(int x, int y, Playfield playfield)
 	public int Y { get; set; } = y;
 	public TetroTypes Type { get; protected set; }
 
-	// Use ConsoleColors
-	public int Color { get; set; }
-
 	// Container for the mutation state (used by BeginMutation(), EndMupation();)
-	private GridMutation _mutationState;
+	private PlayfieldGridMutation _mutationState;
 
 	protected Playfield _playfield = playfield;
 
@@ -77,14 +72,14 @@ public abstract class Tetro(int x, int y, Playfield playfield)
 	// Registers the current location of the tetro blocks
 	public void BeginMutation()
 	{
-		_mutationState = new GridMutation();
+		_mutationState = new PlayfieldGridMutation();
 		foreach (Block b in Blocks)
 			_mutationState.AddSource(b.X, b.Y);
 	}
 
 	// Registers the current location of the tetro blocks and returns 
 	// Tetro mutation with the old block locations and the new block locations 
-	public GridMutation EndMupation()
+	public PlayfieldGridMutation EndMutation()
 	{
 		foreach (Block b in Blocks)
 			_mutationState.AddTarget(b);
@@ -95,13 +90,13 @@ public abstract class Tetro(int x, int y, Playfield playfield)
 	// Creates tetromino
 	public static Tetro CreateTetro(TetroTypes type, Playfield playfield) => type switch
 	{
-		TetroTypes.I => new I(playfield.X - 1 + playfield.W / 2, playfield.Y + 0, playfield),
-		TetroTypes.O => new O(playfield.X - 0 + playfield.W / 2, playfield.Y + 0, playfield),
-		TetroTypes.T => new T(playfield.X - 1 + playfield.W / 2, playfield.Y + 0, playfield),
-		TetroTypes.S => new S(playfield.X - 1 + playfield.W / 2, playfield.Y + 0, playfield),
-		TetroTypes.Z => new Z(playfield.X - 1 + playfield.W / 2, playfield.Y + 0, playfield),
-		TetroTypes.J => new J(playfield.X - 1 + playfield.W / 2, playfield.Y + 0, playfield),
-		TetroTypes.L => new L(playfield.X - 1 + playfield.W / 2, playfield.Y + 0, playfield),
+		TetroTypes.I => new I(1 + playfield.W / 2, 0, playfield),
+		TetroTypes.O => new O(0 + playfield.W / 2, 0, playfield),
+		TetroTypes.T => new T(1 + playfield.W / 2, 0, playfield),
+		TetroTypes.S => new S(1 + playfield.W / 2, 0, playfield),
+		TetroTypes.Z => new Z(1 + playfield.W / 2, 0, playfield),
+		TetroTypes.J => new J(1 + playfield.W / 2, 0, playfield),
+		TetroTypes.L => new L(1 + playfield.W / 2, 0, playfield),
 		_ => throw new ArgumentOutOfRangeException(nameof(type)),
 	};
 }

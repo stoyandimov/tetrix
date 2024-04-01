@@ -1,6 +1,6 @@
 ﻿using Colorful;
 
-namespace Tetrix.GameEngine.UI.Text;
+namespace Tetrix.Cli.UI.Text;
 
 public class FigletWriter : ITextWriter
 {

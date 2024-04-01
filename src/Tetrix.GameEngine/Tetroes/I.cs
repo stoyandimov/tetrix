@@ -5,17 +5,16 @@ public class I : Tetro
 	public I(int x, int y, Playfield playfield)
 		: base(x, y, playfield)
 	{
-		Color = 11;
 		Type = TetroTypes.I;
 		CreateBlocks();
 	}
 
 	private void CreateBlocks() => Blocks =
 	[
-		new(X + 0, Y + 0, Color, SYMBOL, '0'),
-		new(X + 1, Y + 0, Color, SYMBOL, '1'),
-		new(X + 2, Y + 0, Color, SYMBOL, '2'),
-		new(X + 3, Y + 0, Color, SYMBOL, '3'),
+		new(X + 0, Y + 0, Type),
+		new(X + 1, Y + 0, Type),
+		new(X + 2, Y + 0, Type),
+		new(X + 3, Y + 0, Type),
 	];
 
 	public override void Rotate()

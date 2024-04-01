@@ -9,6 +9,9 @@ public class Renderer(GameSettings settings) : IRenderer
 	protected readonly GameSettings _settings = settings;
 	protected readonly BlockingCollection<GridMutation> _mutations = [];
 
+	public void Render(PlayfieldGridMutation mutation)
+		=> _mutations.Add(GridMutation.Create(mutation.SourcePositions.Select(pgm => new Point(pgm.X, pgm.Y)), mutation.TargetPositions.Select(pgm => new DrawablePoint(pgm.X, pgm.Y, pgm.GetColor(), '#', '0'))));
+
 	public void Render(GridMutation mutation)
 		=> _mutations.Add(mutation);
 
