@@ -7,10 +7,6 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<PackageReference Include="Colorful.Console" Version="1.2.1" />
-	</ItemGroup>
-
-	<ItemGroup>
 		<ProjectReference Include="..\Tetrix.GameEngine\Tetrix.GameEngine.csproj" />
 	</ItemGroup>
 

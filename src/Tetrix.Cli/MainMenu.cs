@@ -12,7 +12,7 @@ public class MainMenu(IRenderer renderer, InputQueue inputQueue)
 	{
 		Console.WriteLine("What's next...");
 		_renderer.Clear();
-		_renderer.WriteFiglet(1, 0, "TetriS");
+		_renderer.WriteText(1, 5, "TetriX");
 		_renderer.WriteText(1, 7, " - Start game");
 		_renderer.WriteText(1, 8, "   Load");
 		_renderer.WriteText(1, 9, "   Exit");

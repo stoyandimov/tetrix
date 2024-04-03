@@ -19,32 +19,33 @@ public class TetrisStage
 		_renderer = renderer;
 		_settings = settings;
 		_inputQueue = inputQueue;
-		Playfield = new Playfield(20, 10, new Random().Next);
-		PlayfieldRenderer = new PlayfieldRenderer(0, 0, renderer, Playfield);
 		Scoreboard = new Scoreboard();
-	}
-
-	public void Render()
-	{
-		PlayfieldRenderer.Render();
+		Playfield = new Playfield(20, 10, () => new Random().Next(7));
+		PlayfieldRenderer = new PlayfieldRenderer(0, 0, renderer, Playfield, Scoreboard);
 	}
 
 	protected void RowRemovedHandler(object sender, int i)
 	{
 		var score = i;
 		if (score == 4)
-			score = 8;
+			score *= 2;
 		Scoreboard.IncrementScore(score);
+		_renderer.WriteText(17, 4, $"Score: {Scoreboard.GetScore()}");
 	}
 
 	// Generates a random tetro
 	public void Start()
 	{
-		_renderer.Clear();
-		Playfield.RowRemoved += RowRemovedHandler;
-		PlayfieldRenderer.Render();
 		var keepRuuning = true;
-		using var timer = new Timer((_) => keepRuuning = PlayfieldRenderer.Progress(), null, 0, 1100 - (_settings.Speed * 100));
+		PlayfieldRenderer.Render();
+		Playfield.RowRemoved += RowRemovedHandler;
+		Playfield.GameOver += (_, _) =>
+		{
+			keepRuuning = false;
+			_renderer.WriteText(17, 13, "Game Over");
+			_renderer.WriteText(17, 15, "[press a key to go to menu]");
+		};
+		using var timer = new Timer((_) => Playfield.Progress(), null, 0, 1100 - (_settings.Speed * 100));
 		while (keepRuuning)
 		{
 			ConsoleKey input = _inputQueue.GetNextInput();
@@ -52,34 +53,28 @@ public class TetrisStage
 			{
 				case ConsoleKey.Q:
 				case ConsoleKey.X: keepRuuning = false; break;
-				case ConsoleKey.UpArrow: PlayfieldRenderer.Rotate(); break;
-				case ConsoleKey.LeftArrow: PlayfieldRenderer.MoveLeft(); break;
-				case ConsoleKey.RightArrow: PlayfieldRenderer.MoveRight(); break;
-				case ConsoleKey.DownArrow: PlayfieldRenderer.MoveDown(); break;
-				case ConsoleKey.F5: Render(); break;
+				case ConsoleKey.UpArrow: Playfield.Rotate(); break;
+				case ConsoleKey.LeftArrow: Playfield.MoveLeft(); break;
+				case ConsoleKey.RightArrow: Playfield.MoveRight(); break;
+				case ConsoleKey.DownArrow: Playfield.MoveDown(); break;
+				case ConsoleKey.F5: PlayfieldRenderer.Render(); break;
 				case ConsoleKey.Escape:
 					timer.Change(0, Timeout.Infinite);
 					_renderer.WriteText(17, 13, "Game Paused");
 					var next = new InGameMenu(_renderer, _inputQueue).WhatsNext();
 					switch (next)
 					{
-						// case MenuOptions.SaveGame:
-						// 	new JsonRepository().Save(new SavableData()
-						// 	{
-						// 		NextTetro = _stage.Scoreboard.NextTetro.Type,
-						// 		CurrentTetro = _curTetro.Type,
-						// 		Blocks = GetBlocks(),
-						// 		Score = _stage.Scoreboard.GetScore(),
-						// 	});
-						// 	// Show game saved message for 2 seconds and quit
-						// 	_renderer.WriteText(17, 15, "Game saved!");
-						// 	Thread.Sleep(1000);
-						// 	_renderer.WriteText(17, 15, "           ");
-						// 	keepRuuning = false;
-						// 	break;
+						case MenuOptions.SaveGame:
+							JsonFileRepository.Save(new(_settings.Speed, Scoreboard.GetScore(), Playfield.NextTetro.Type, Playfield.CurrTetro.Type, Playfield.GetBlocks()));
+							// Show game saved message for 2 seconds and quit
+							_renderer.WriteText(17, 15, "Game saved!");
+							Thread.Sleep(1000);
+							_renderer.WriteText(17, 15, "           ");
+							keepRuuning = false;
+							break;
 						case MenuOptions.ResumeGame:
 							_renderer.Clear();
-							Render();
+							PlayfieldRenderer.Render();
 							timer.Change(100, 1100 - (_settings.Speed * 100));
 							break;
 						case MenuOptions.QuitGame:
@@ -102,18 +97,17 @@ public class TetrisStage
 
 	public void Load(SavableData savableData)
 	{
-		// _renderer.Clear();
-		// Playfield.RowRemoved += RowRemovedHandler;
-		// var currTetro = Tetro.CreateTetro(savableData.CurrentTetro, Playfield);
-		// var nextTetro = Tetro.CreateTetro(savableData.NextTetro, Playfield);
+		var currTetro = Tetro.CreateTetro(savableData.CurrentTetro, Playfield);
+		var nextTetro = Tetro.CreateTetro(savableData.NextTetro, Playfield);
 
-		// _nextTetro = nextTetro;
-		// // Load scoreboard
-		// Scoreboard.IncrementScore(savableData.Score);
+		// Load scoreboard
+		Scoreboard.IncrementScore(savableData.Score);
+		RowRemovedHandler(null, 0);
 
-		// // Load blocks
-		// Playfield.SetBlocks(savableData.Blocks.Concat(currTetro.Blocks));
-		// Playfield.SetCurrentTetro(currTetro);
-		// Thread.Sleep(300);
+		// Load blocks
+		Playfield.SetBlocks(savableData.Blocks);
+		Playfield.SetCurrTetro(currTetro);
+		Playfield.SetNextTetro(nextTetro);
+		Thread.Sleep(300);
 	}
 }

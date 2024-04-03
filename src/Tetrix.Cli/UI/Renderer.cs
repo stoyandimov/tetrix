@@ -1,5 +1,4 @@
 using System.Collections.Concurrent;
-using Tetrix.GameEngine.UI;
 
 namespace Tetrix.Cli.UI;
 
@@ -8,9 +7,6 @@ public class Renderer(GameSettings settings) : IRenderer
 	protected readonly CancellationTokenSource _cts = new();
 	protected readonly GameSettings _settings = settings;
 	protected readonly BlockingCollection<GridMutation> _mutations = [];
-
-	public void Render(PlayfieldGridMutation mutation)
-		=> _mutations.Add(GridMutation.Create(mutation.SourcePositions.Select(pgm => new Point(pgm.X, pgm.Y)), mutation.TargetPositions.Select(pgm => new DrawablePoint(pgm.X, pgm.Y, pgm.GetColor(), '#', '0'))));
 
 	public void Render(GridMutation mutation)
 		=> _mutations.Add(mutation);
@@ -79,6 +75,7 @@ public class Renderer(GameSettings settings) : IRenderer
 					Console.ForegroundColor = (ConsoleColor)p.ForeColor;
 				Console.SetCursorPosition(p.X, p.Y);
 				Console.Write(_settings.Debug ? p.Debug : p.Symbol);
+				// Console.Write(_settings.Debug ? p.Debug : p.Y.ToString().Last());
 			}
 			if (ct.IsCancellationRequested)
 				break;

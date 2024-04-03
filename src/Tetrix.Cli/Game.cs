@@ -22,32 +22,15 @@ public class Game(GameSettings settings, IRenderer renderer, InputQueue inputQue
 				MenuOptions next = mainMenu.WhatsNext();
 				switch (next)
 				{
-					case MenuOptions.Exit:
-						run = false;
-						break;
-					case MenuOptions.Load:
-						var stage = new TetrisStage(_renderer, _settings, _inputQueue);
-						stage.Load(JsonRepository.Load());
-						// game finished
-						break;
 					case MenuOptions.StartGame:
-						stage = new TetrisStage(_renderer, _settings, _inputQueue);
-						stage.Start();
-						break;
-					// case MenuOptions.SaveGame:
-					// 	stage = new TetrisStage(_renderer, _settings, _inputQueue);
-					// 	JsonRepository.Save(new SavableData(default, stage.Scoreboard.GetScore(), stage.Playfield.CurrentTetro.Type, stage.Playfield.NextTetro.Type, stage.Playfield.GetBlocks()));
-					// 	// Show game saved message for 2 seconds and quit
-					// 	_renderer.WriteText(17, 15, "Game saved!");
-					// 	Thread.Sleep(1000);
-					// 	_renderer.WriteText(17, 15, "		   ");
-					// 	run = false;
-					// 	break;
 					case MenuOptions.ResumeGame:
-						stage = new TetrisStage(_renderer, _settings, _inputQueue);
+					case MenuOptions.Load:
 						_renderer.Clear();
-						stage.Start();
+						var stage = new TetrisStage(_renderer, _settings, _inputQueue);
+						if (next == MenuOptions.Load) stage.Load(JsonFileRepository.Load());
+						stage.Start(); // blocking
 						break;
+					case MenuOptions.Exit:
 					case MenuOptions.QuitGame:
 						run = false;
 						break;
@@ -69,6 +52,5 @@ public class Game(GameSettings settings, IRenderer renderer, InputQueue inputQue
 		}
 	}
 
-	public void Shutdown()
-		=> Thread.Sleep(900);
+	public static void Shutdown() => Thread.Sleep(900);
 }

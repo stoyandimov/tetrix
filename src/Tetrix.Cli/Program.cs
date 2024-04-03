@@ -16,7 +16,7 @@ var settings = new GameSettings(10, false).SetFromArgs(args);
 var renderer = new Renderer(settings);
 var game = new Game(settings, renderer, inputQueue);
 game.Bootstrap(); // blocks
-game.Shutdown();
+Game.Shutdown();
 ResetConsole();
 
 static void ResetConsole()

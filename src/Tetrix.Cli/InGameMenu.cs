@@ -15,7 +15,7 @@ public class InGameMenu(IRenderer renderer, InputQueue inputQueue)
 		var timeout = new Timer(state =>
 		{
 			_renderer.Clear();
-			_renderer.WriteFiglet(1, 0, "TetriS");
+			_renderer.WriteText(1, 5, "TetriX");
 			_renderer.WriteText(1, 7, " - Resume");
 			_renderer.WriteText(1, 8, "   Save");
 			_renderer.WriteText(1, 9, "   Quit");

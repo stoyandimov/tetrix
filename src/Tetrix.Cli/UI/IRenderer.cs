@@ -2,7 +2,6 @@ namespace Tetrix.Cli.UI;
 
 public interface IRenderer
 {
-	void Render(PlayfieldGridMutation mutation);
 	void Render(GridMutation mutation);
 
 	void Render(int x, int y, char symbol, int color = (int) ConsoleColor.White, char d = ' ');

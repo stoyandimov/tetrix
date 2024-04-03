@@ -8,9 +8,6 @@ public abstract class Tetro(int x, int y, Playfield playfield)
 	public int Y { get; set; } = y;
 	public TetroTypes Type { get; protected set; }
 
-	// Container for the mutation state (used by BeginMutation(), EndMupation();)
-	private PlayfieldGridMutation _mutationState;
-
 	protected Playfield _playfield = playfield;
 
 	public abstract void Rotate();
@@ -67,24 +64,6 @@ public abstract class Tetro(int x, int y, Playfield playfield)
 		}
 
 		return true;
-	}
-
-	// Registers the current location of the tetro blocks
-	public void BeginMutation()
-	{
-		_mutationState = new PlayfieldGridMutation();
-		foreach (Block b in Blocks)
-			_mutationState.AddSource(b.X, b.Y);
-	}
-
-	// Registers the current location of the tetro blocks and returns 
-	// Tetro mutation with the old block locations and the new block locations 
-	public PlayfieldGridMutation EndMutation()
-	{
-		foreach (Block b in Blocks)
-			_mutationState.AddTarget(b);
-
-		return _mutationState;
 	}
 
 	// Creates tetromino

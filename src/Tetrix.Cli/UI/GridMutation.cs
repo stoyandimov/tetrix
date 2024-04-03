@@ -1,6 +1,6 @@
 namespace Tetrix.Cli.UI;
 
-public class GridMutation : PlayfieldGridMutation
+public class GridMutation
 {
 	public List<Point> SourcePositions { get; private set; } = [];
 	public List<DrawablePoint> TargetPositions { get; private set; } = [];
@@ -34,15 +34,6 @@ public class GridMutation : PlayfieldGridMutation
 		var m = new GridMutation();
 		m.AddSource(source);
 		m.AddTarget(target);
-
-		return m;
-	}
-
-	public static GridMutation Create(IEnumerable<DrawablePoint> target)
-	{
-		var m = new GridMutation();
-		m.AddSources(target);
-		m.AddTargets(target);
 
 		return m;
 	}

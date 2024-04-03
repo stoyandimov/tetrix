@@ -16,25 +16,15 @@ public class PlayfiledShould
 	}
 
 	[Fact]
-	public void Progress()
-	{
-		var sut = new Playfield(10, 20, () => 0);
-
-		var result = sut.Progress();
-
-		Assert.True(result);
-	}
-
-	[Fact]
 	public void CreateFirstTetro()
 	{
 		var sut = new Playfield(10, 20, () => 0);
-		var initTetro = sut.CurrentTetro;
+		var initTetro = sut.CurrTetro;
 
 		sut.Progress();
 
 		Assert.Null(initTetro);
-		Assert.NotNull(sut.CurrentTetro);
+		Assert.NotNull(sut.CurrTetro);
 	}
 
 	[Fact]
@@ -44,9 +34,9 @@ public class PlayfiledShould
 		sut.Progress();
 		var nextTetro = sut.NextTetro;
 
-		sut.ResetCurrentTetro(0);
+		sut.ResetCurrentTetro(sut.GenerateRandomTetro());
 
-		Assert.Same(nextTetro, sut.CurrentTetro);
+		Assert.Same(nextTetro, sut.CurrTetro);
 	}
 
 	[Fact]
@@ -55,8 +45,38 @@ public class PlayfiledShould
 		var sut = new Playfield(10, 20, () => 0);
 		var tetro = Tetro.CreateTetro(TetroTypes.I, sut);
 
-		sut.SetCurrentTetro(tetro);
+		sut.SetCurrTetro(tetro);
 
-		Assert.Same(tetro, sut.CurrentTetro);
+		Assert.Same(tetro, sut.CurrTetro);
+	}
+
+	[Fact]
+	public void FireChangingGridWhenTetroMovesDown()
+	{
+		var sut = new Playfield(10, 20, () => 0);
+		sut.Progress();
+
+		Assert.Raises<Block[]>(h => sut.PlayfieldGridChanging += h, h => sut.PlayfieldGridChanging -= h, sut.MoveDown);
+		Assert.Raises<Block[]>(h => sut.PlayfieldGridChanged += h, h => sut.PlayfieldGridChanged -= h, sut.MoveDown);
+	}
+
+	[Fact]
+	public void FireChangingGridWhenTetroMovesLeft()
+	{
+		var sut = new Playfield(10, 20, () => 0);
+		sut.Progress();
+
+		Assert.Raises<Block[]>(h => sut.PlayfieldGridChanging += h, h => sut.PlayfieldGridChanging -= h, sut.MoveLeft);
+		Assert.Raises<Block[]>(h => sut.PlayfieldGridChanged += h, h => sut.PlayfieldGridChanged -= h, sut.MoveLeft);
+	}
+
+	[Fact]
+	public void FireChangingGridWhenTetroMovesRight()
+	{
+		var sut = new Playfield(10, 20, () => 0);
+		sut.Progress();
+
+		Assert.Raises<Block[]>(h => sut.PlayfieldGridChanging += h, h => sut.PlayfieldGridChanging -= h, sut.MoveRight);
+		Assert.Raises<Block[]>(h => sut.PlayfieldGridChanged += h, h => sut.PlayfieldGridChanged -= h, sut.MoveRight);
 	}
 }
